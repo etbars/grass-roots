@@ -21,6 +21,7 @@ import {
   Send,
   X,
   Plus,
+  MessageSquare,
 } from "lucide-react";
 import { hosts, formatPrice } from "@/lib/data";
 import type { DesignedResidency } from "@/lib/residency-schema";
@@ -94,6 +95,7 @@ export function ResidencyDesigner({
   const [matches, setMatches] = useState<
     { hostId: string; fitScore: number; reason: string }[]
   >([]);
+  const [refining, setRefining] = useState(false);
 
   const host = hosts.find((h) => h.id === hostId)!;
 
@@ -182,6 +184,46 @@ export function ResidencyDesigner({
     } catch {
       setMatchStatus("error");
     }
+  }
+
+  async function refine(instruction: string) {
+    if (!residency || refining || !instruction.trim()) return;
+    setRefining(true);
+    const current = residency;
+    const run = async (): Promise<DesignedResidency | null> => {
+      const res = await fetch("/api/refine-residency", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          residency: current,
+          instruction,
+          hostName: host.name,
+        }),
+      });
+      if (!res.ok || !res.body) return null;
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let acc = "";
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += decoder.decode(value, { stream: true });
+        if (acc.includes("__ERROR__")) return null;
+      }
+      return tryParse(acc);
+    };
+    for (let i = 0; i < 3; i++) {
+      try {
+        const next = await run();
+        if (next) {
+          setResidency(next);
+          break;
+        }
+      } catch {
+        // retry a cut/garbled stream
+      }
+    }
+    setRefining(false);
   }
 
   const livePreview = status === "designing" && !residency;
@@ -441,6 +483,8 @@ export function ResidencyDesigner({
             residency={residency}
             hostName={host.name}
             onChange={setResidency}
+            onRefine={refine}
+            refining={refining}
           />
         )}
       </div>
@@ -531,10 +575,14 @@ function ResidencyResult({
   residency,
   hostName,
   onChange,
+  onRefine,
+  refining,
 }: {
   residency: DesignedResidency;
   hostName: string;
   onChange: (next: DesignedResidency) => void;
+  onRefine: (instruction: string) => void;
+  refining: boolean;
 }) {
   const set = (patch: Partial<DesignedResidency>) =>
     onChange({ ...residency, ...patch });
@@ -548,7 +596,15 @@ function ResidencyResult({
     });
 
   return (
-    <article className="animate-[fadeIn_0.4s_ease] rounded-2xl border border-stone-soft bg-paper p-8 shadow-lift">
+    <article className="relative animate-[fadeIn_0.4s_ease] rounded-2xl border border-stone-soft bg-paper p-8 shadow-lift">
+      {refining && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-paper/70 backdrop-blur-sm">
+          <div className="flex items-center gap-2 rounded-full bg-paper px-4 py-2 text-sm font-semibold text-moss shadow-soft">
+            <Loader2 className="h-4 w-4 animate-spin" /> Applying your change…
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between gap-3">
         <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-clay">
           <PencilRuler className="h-4 w-4" />
@@ -556,6 +612,8 @@ function ResidencyResult({
         </span>
         <span className="text-xs text-stone">Tap any text to edit</span>
       </div>
+
+      <RefineBar onRefine={onRefine} refining={refining} />
 
       <h2 className="mt-3 font-display text-3xl font-semibold leading-tight text-bark">
         <EditableText value={residency.title} onCommit={(v) => set({ title: v })} />
@@ -1030,6 +1088,69 @@ function EarningsRow({
       <dd className={muted ? "text-bark-soft" : "font-medium text-bark"}>
         {value}
       </dd>
+    </div>
+  );
+}
+
+const REFINE_SUGGESTIONS = [
+  "Make it more hands-on",
+  "Shorten to a weekend",
+  "Make it more affordable",
+  "Add an evening around the fire",
+];
+
+function RefineBar({
+  onRefine,
+  refining,
+}: {
+  onRefine: (instruction: string) => void;
+  refining: boolean;
+}) {
+  const [text, setText] = useState("");
+  const submit = () => {
+    if (!text.trim() || refining) return;
+    onRefine(text.trim());
+    setText("");
+  };
+  return (
+    <div className="mt-4 rounded-xl border border-fern/30 bg-fern/5 p-3">
+      <div className="flex items-center gap-2">
+        <MessageSquare className="h-4 w-4 shrink-0 text-moss" />
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              submit();
+            }
+          }}
+          disabled={refining}
+          placeholder="Ask for a change, e.g. make it more hands-on"
+          className="min-w-0 flex-1 bg-transparent text-sm text-bark outline-none placeholder:text-stone"
+        />
+        <button
+          type="button"
+          onClick={submit}
+          disabled={refining || !text.trim()}
+          className="shrink-0 rounded-full bg-moss px-3.5 py-1.5 text-xs font-semibold text-paper transition-colors hover:bg-moss-deep disabled:opacity-50"
+        >
+          {refining ? "Applying…" : "Refine"}
+        </button>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {REFINE_SUGGESTIONS.map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => !refining && onRefine(s)}
+            disabled={refining}
+            className="rounded-full border border-stone-soft bg-cream/60 px-2.5 py-1 text-xs text-bark-soft transition-colors hover:border-fern hover:text-moss disabled:opacity-50"
+          >
+            {s}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
