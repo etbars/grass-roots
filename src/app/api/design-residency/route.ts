@@ -97,7 +97,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         error:
-          "The AI Residency Designer needs an ANTHROPIC_API_KEY. Add one to .env.local and restart.",
+          "The AI Residency Designer isn't configured yet — set ANTHROPIC_API_KEY in the site's environment variables.",
       },
       { status: 503 },
     );
