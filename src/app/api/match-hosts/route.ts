@@ -4,7 +4,7 @@ import { hosts } from "@/lib/data";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export interface HostMatch {
+interface HostMatch {
   hostId: string;
   fitScore: number;
   reason: string;
@@ -13,7 +13,8 @@ export interface HostMatch {
 export async function POST(request: Request) {
   let skill = "";
   try {
-    ({ skill } = (await request.json()) as { skill?: string });
+    const body = (await request.json()) as { skill?: string };
+    skill = body.skill ?? "";
   } catch {
     return Response.json({ error: "Invalid request body." }, { status: 400 });
   }
