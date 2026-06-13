@@ -47,7 +47,9 @@ export function HostMap() {
       const mapboxgl = (await import("mapbox-gl")).default;
       if (cancelled || !container) return;
       mapboxgl.accessToken = TOKEN;
-      const map = new mapboxgl.Map({
+      // Typed loosely: mapbox-gl v3's layer/expression types are very strict
+      // and reject otherwise-valid cluster paint expressions.
+      const map: any = new mapboxgl.Map({
         container,
         style: "mapbox://styles/mapbox/outdoors-v12",
         center: [3, 47],
