@@ -14,6 +14,9 @@ export interface DesignedResidency {
   materials: string[];
   whatToBring: string[];
   whyThisMatch: string;
+  suggestedPrice: number;
+  materialsCostPerStudent: number;
+  pricingRationale: string;
 }
 
 /** JSON Schema passed to the Messages API as a structured-output constraint. */

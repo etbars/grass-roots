@@ -24,6 +24,7 @@ Design principles — follow all of them:
 - Make the day-by-day schedule build progressively: orientation and fundamentals first, hands-on practice in the middle, a real finished outcome by the end.
 - Warm, grounded, practical voice. Real-world craft, not corporate training.
 - Never use em dashes (the "—" character) anywhere in your writing. Use commas, colons, or periods instead.
+- Suggest a realistic price a student would happily pay for this format, skill, and region, plus a sober estimate of materials cost per student.
 
 OUTPUT CONTRACT — this is strict:
 Respond with a SINGLE valid JSON object and NOTHING else. No markdown, no code fences, no commentary before or after. Use exactly these keys:
@@ -38,7 +39,10 @@ Respond with a SINGLE valid JSON object and NOTHING else. No markdown, no code f
   "landImpact": string[] — the genuine, real improvements to the land/host (a by-product of the learning),
   "materials": string[] — materials, tools, or inputs used,
   "whatToBring": string[] — what the student should bring,
-  "whyThisMatch": string — 1–2 sentences on why this skill and this site fit together
+  "whyThisMatch": string, 1 to 2 sentences on why this skill and this site fit together,
+  "suggestedPrice": number, the fair price in euros that ONE student pays for the whole residency (realistic for this format, skill, and region),
+  "materialsCostPerStudent": number, estimated euros of materials and consumables per student (0 if minimal),
+  "pricingRationale": string, one short sentence explaining the price
 }`;
 
 function buildUserPrompt(opts: {

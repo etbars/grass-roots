@@ -13,8 +13,11 @@ import {
   MapPin,
   CalendarDays,
   Check,
+  Compass,
+  Wallet,
+  TrendingUp,
 } from "lucide-react";
-import { hosts } from "@/lib/data";
+import { hosts, formatPrice } from "@/lib/data";
 import type { DesignedResidency } from "@/lib/residency-schema";
 import { cn } from "@/lib/utils";
 
@@ -79,6 +82,13 @@ export function ResidencyDesigner({
   const [residency, setResidency] = useState<DesignedResidency | null>(null);
   const [error, setError] = useState("");
 
+  const [matchStatus, setMatchStatus] = useState<
+    "idle" | "matching" | "done" | "error"
+  >("idle");
+  const [matches, setMatches] = useState<
+    { hostId: string; fitScore: number; reason: string }[]
+  >([]);
+
   const host = hosts.find((h) => h.id === hostId)!;
 
   async function handleSubmit(e: React.FormEvent) {
@@ -136,6 +146,28 @@ export function ResidencyDesigner({
     }
   }
 
+  async function findMatches() {
+    if (!skill.trim() || matchStatus === "matching") return;
+    setMatchStatus("matching");
+    setMatches([]);
+    try {
+      const res = await fetch("/api/match-hosts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ skill }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.matches?.length) {
+        setMatchStatus("error");
+        return;
+      }
+      setMatches(data.matches);
+      setMatchStatus("done");
+    } catch {
+      setMatchStatus("error");
+    }
+  }
+
   const livePreview = status === "designing" && !residency;
   const titlePreview = extractString(raw, "title");
   const hookPreview = extractString(raw, "hook");
@@ -186,6 +218,79 @@ export function ResidencyDesigner({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Smart matching */}
+          <div>
+            <button
+              type="button"
+              onClick={findMatches}
+              disabled={!skill.trim() || matchStatus === "matching"}
+              className="flex items-center gap-1.5 text-sm font-semibold text-moss transition-colors hover:text-moss-deep disabled:opacity-50"
+            >
+              {matchStatus === "matching" ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Finding your best-matched sites…
+                </>
+              ) : (
+                <>
+                  <Compass className="h-4 w-4" />
+                  Not sure where? Find your best-matched sites
+                </>
+              )}
+            </button>
+
+            {matchStatus === "error" && (
+              <p className="mt-2 text-xs text-clay">
+                Couldn&apos;t find matches just now. Pick a site below.
+              </p>
+            )}
+
+            {matchStatus === "done" && matches.length > 0 && (
+              <ul className="mt-3 space-y-2">
+                {matches.map((m, i) => {
+                  const mh = hosts.find((h) => h.id === m.hostId);
+                  if (!mh) return null;
+                  const active = hostId === m.hostId;
+                  return (
+                    <li key={m.hostId}>
+                      <button
+                        type="button"
+                        onClick={() => setHostId(m.hostId)}
+                        className={cn(
+                          "w-full rounded-xl border p-3 text-left transition-colors",
+                          active
+                            ? "border-moss bg-fern/10"
+                            : "border-stone-soft bg-cream/40 hover:border-fern",
+                        )}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-sm font-semibold text-bark">
+                            {mh.name}
+                          </span>
+                          <span className="flex items-center gap-1 text-xs font-semibold text-moss">
+                            {i === 0 && <TrendingUp className="h-3 w-3" />}
+                            {m.fitScore}% fit
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-xs text-bark-soft">
+                          {mh.location.place}, {mh.location.country}
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-bark-soft">
+                          {m.reason}
+                        </p>
+                        {active && (
+                          <span className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-moss">
+                            <Check className="h-3 w-3" /> Selected
+                          </span>
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           {/* Host */}
@@ -431,6 +536,8 @@ function ResidencyResult({
         </p>
       </div>
 
+      <EarningsPanel residency={residency} />
+
       {/* schedule */}
       <Section title="Day by day" icon={<CalendarDays className="h-4 w-4" />}>
         <ol className="mt-2 space-y-4">
@@ -550,6 +657,98 @@ function ListBlock({
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+// Grass Roots takes a small platform fee; the host site takes a share for venue,
+// accommodation, and food. The rest, minus materials, is the teacher's.
+const PLATFORM_FEE = 0.1;
+const HOST_SHARE = 0.15;
+
+function EarningsPanel({ residency }: { residency: DesignedResidency }) {
+  const [students, setStudents] = useState(residency.groupSize);
+  const gross = students * residency.suggestedPrice;
+  const platform = gross * PLATFORM_FEE;
+  const hostShare = gross * HOST_SHARE;
+  const materials = students * residency.materialsCostPerStudent;
+  const takeHome = Math.max(0, gross - platform - hostShare - materials);
+
+  return (
+    <div className="mt-7 rounded-2xl border border-ochre/40 bg-ochre/10 p-5">
+      <div className="flex items-center gap-1.5 font-display text-lg font-semibold text-bark">
+        <Wallet className="h-5 w-5 text-clay" /> What you could earn
+      </div>
+      <p className="mt-1 text-sm leading-relaxed text-bark-soft">
+        {residency.pricingRationale}
+      </p>
+
+      <div className="mt-4 flex items-baseline justify-between text-sm">
+        <span className="text-bark-soft">Suggested price per student</span>
+        <span className="font-semibold text-bark">
+          {formatPrice(residency.suggestedPrice)}
+        </span>
+      </div>
+
+      <div className="mt-4">
+        <div className="flex items-center justify-between text-sm">
+          <label className="flex items-center gap-1.5 text-bark-soft">
+            <Users className="h-4 w-4 text-fern" /> Students enrolled
+          </label>
+          <span className="font-semibold text-bark">
+            {students} of {residency.groupSize}
+          </span>
+        </div>
+        <input
+          type="range"
+          min={1}
+          max={residency.groupSize}
+          value={students}
+          onChange={(e) => setStudents(Number(e.target.value))}
+          className="mt-2 w-full accent-moss"
+          aria-label="Students enrolled"
+        />
+      </div>
+
+      <dl className="mt-4 space-y-1.5 text-sm">
+        <EarningsRow label="Gross fees" value={formatPrice(gross)} />
+        <EarningsRow label="Grass Roots (10%)" value={`- ${formatPrice(platform)}`} muted />
+        <EarningsRow label="Host site (15%)" value={`- ${formatPrice(hostShare)}`} muted />
+        {materials > 0 && (
+          <EarningsRow label="Materials" value={`- ${formatPrice(materials)}`} muted />
+        )}
+      </dl>
+
+      <div className="mt-3 flex items-baseline justify-between border-t border-ochre/40 pt-3">
+        <span className="flex items-center gap-1.5 font-semibold text-bark">
+          <TrendingUp className="h-4 w-4 text-clay" /> You take home
+        </span>
+        <span className="font-display text-2xl font-semibold text-moss-deep">
+          {formatPrice(takeHome)}
+        </span>
+      </div>
+      <p className="mt-1 text-right text-xs text-bark-soft">
+        about {formatPrice(students > 0 ? takeHome / students : 0)} per student
+      </p>
+    </div>
+  );
+}
+
+function EarningsRow({
+  label,
+  value,
+  muted,
+}: {
+  label: string;
+  value: string;
+  muted?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <dt className="text-bark-soft">{label}</dt>
+      <dd className={muted ? "text-bark-soft" : "font-medium text-bark"}>
+        {value}
+      </dd>
     </div>
   );
 }
