@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  Sparkles,
+  PencilRuler,
   Loader2,
   Clock,
   Users,
@@ -149,7 +149,7 @@ export function ResidencyDesigner({
         className="h-fit rounded-2xl border border-stone-soft bg-paper p-6 shadow-soft lg:sticky lg:top-24"
       >
         <div className="flex items-center gap-2 text-clay">
-          <Sparkles className="h-5 w-5" />
+          <PencilRuler className="h-5 w-5" />
           <span className="text-sm font-semibold uppercase tracking-wider">
             Residency Studio
           </span>
@@ -267,7 +267,7 @@ export function ResidencyDesigner({
               </>
             ) : (
               <>
-                <Sparkles className="h-4 w-4" />
+                <PencilRuler className="h-4 w-4" />
                 Build my residency
               </>
             )}
@@ -309,7 +309,7 @@ function DesignerEmptyState() {
   return (
     <div className="flex h-full min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-stone-soft bg-paper/50 p-10 text-center">
       <div className="rounded-full bg-fern/10 p-4">
-        <Sparkles className="h-7 w-7 text-fern" />
+        <PencilRuler className="h-7 w-7 text-fern" />
       </div>
       <h3 className="mt-4 font-display text-xl font-semibold text-bark">
         Your residency appears here
@@ -392,7 +392,7 @@ function ResidencyResult({
   return (
     <article className="animate-[fadeIn_0.4s_ease] rounded-2xl border border-stone-soft bg-paper p-8 shadow-lift">
       <div className="flex items-center gap-2 text-clay">
-        <Sparkles className="h-4 w-4" />
+        <PencilRuler className="h-4 w-4" />
         <span className="text-xs font-semibold uppercase tracking-wider">
           Designed residency · {hostName}
         </span>

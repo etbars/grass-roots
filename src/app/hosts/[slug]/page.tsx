@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { MapPin, Sprout, Home, Check, Sparkles, ExternalLink } from "lucide-react";
+import { MapPin, Sprout, Home, Check, PencilRuler, ExternalLink } from "lucide-react";
 import { hosts, getHostBySlug, getCoursesByHost } from "@/lib/data";
 import { CourseCard } from "@/components/course-card";
 
@@ -130,7 +130,7 @@ export default async function HostProfilePage({
               href="/teach"
               className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-moss px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-moss-deep"
             >
-              <Sparkles className="h-4 w-4" />
+              <PencilRuler className="h-4 w-4" />
               Design a residency here
             </Link>
 

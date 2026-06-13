@@ -7,7 +7,7 @@ import {
   Sprout,
   ArrowRight,
   Check,
-  Sparkles,
+  PencilRuler,
 } from "lucide-react";
 import { categories } from "@/lib/data";
 import { CategoryIcon } from "@/components/category-icon";
@@ -72,7 +72,7 @@ export default function BecomeATeacherPage() {
                 href="/teach"
                 className="inline-flex items-center gap-2 rounded-full border border-moss/30 px-6 py-3 text-sm font-semibold text-moss-deep transition-colors hover:bg-fern/10"
               >
-                <Sparkles className="h-4 w-4" />
+                <PencilRuler className="h-4 w-4" />
                 Already skilled? Design a residency
               </Link>
             </div>
@@ -228,7 +228,7 @@ export default function BecomeATeacherPage() {
               href="/teach"
               className="inline-flex items-center gap-2 rounded-full border border-moss/30 px-6 py-3 text-sm font-semibold text-moss-deep transition-colors hover:bg-fern/10"
             >
-              <Sparkles className="h-4 w-4" />
+              <PencilRuler className="h-4 w-4" />
               Design a residency
             </Link>
           </div>

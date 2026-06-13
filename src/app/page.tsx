@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
-  Sparkles,
+  PencilRuler,
   GraduationCap,
   Users,
   Sprout,
@@ -91,7 +91,7 @@ export default function Home() {
                 href="/teach"
                 className="inline-flex items-center gap-2 rounded-full border border-paper/40 px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-paper/10"
               >
-                <Sparkles className="h-4 w-4" />
+                <PencilRuler className="h-4 w-4" />
                 Host a residency
               </Link>
             </div>
@@ -285,7 +285,7 @@ export default function Home() {
           <div className="grid items-center gap-8 p-8 sm:p-12 lg:grid-cols-[1.2fr_1fr]">
             <div>
               <div className="flex items-center gap-2 text-wheat">
-                <Sparkles className="h-5 w-5" />
+                <PencilRuler className="h-5 w-5" />
                 <span className="text-sm font-semibold uppercase tracking-wider">
                   Residency Studio
                 </span>
@@ -303,7 +303,7 @@ export default function Home() {
                 href="/teach"
                 className="mt-7 inline-flex items-center gap-2 rounded-full bg-wheat px-6 py-3 text-sm font-semibold text-moss-deep transition-colors hover:bg-paper"
               >
-                <Sparkles className="h-4 w-4" />
+                <PencilRuler className="h-4 w-4" />
                 Build your residency
               </Link>
             </div>
