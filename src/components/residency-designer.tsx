@@ -19,6 +19,8 @@ import {
   Copy,
   Megaphone,
   Send,
+  X,
+  Plus,
 } from "lucide-react";
 import { hosts, formatPrice } from "@/lib/data";
 import type { DesignedResidency } from "@/lib/residency-schema";
@@ -406,7 +408,11 @@ export function ResidencyDesigner({
         )}
 
         {residency && status === "done" && (
-          <ResidencyResult residency={residency} hostName={host.name} />
+          <ResidencyResult
+            residency={residency}
+            hostName={host.name}
+            onChange={setResidency}
+          />
         )}
       </div>
     </div>
@@ -490,42 +496,74 @@ function DesignerLiveState({
   );
 }
 
+type ListKey = "studentOutcomes" | "landImpact" | "materials" | "whatToBring";
+
 function ResidencyResult({
   residency,
   hostName,
+  onChange,
 }: {
   residency: DesignedResidency;
   hostName: string;
+  onChange: (next: DesignedResidency) => void;
 }) {
+  const set = (patch: Partial<DesignedResidency>) =>
+    onChange({ ...residency, ...patch });
+  const setList = (key: ListKey, next: string[]) =>
+    set({ [key]: next } as Partial<DesignedResidency>);
+  const setActivities = (dayIdx: number, acts: string[]) =>
+    set({
+      schedule: residency.schedule.map((d, j) =>
+        j === dayIdx ? { ...d, activities: acts } : d,
+      ),
+    });
+
   return (
     <article className="animate-[fadeIn_0.4s_ease] rounded-2xl border border-stone-soft bg-paper p-8 shadow-lift">
-      <div className="flex items-center gap-2 text-clay">
-        <PencilRuler className="h-4 w-4" />
-        <span className="text-xs font-semibold uppercase tracking-wider">
+      <div className="flex items-center justify-between gap-3">
+        <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-clay">
+          <PencilRuler className="h-4 w-4" />
           Designed residency · {hostName}
         </span>
+        <span className="text-xs text-stone">Tap any text to edit</span>
       </div>
+
       <h2 className="mt-3 font-display text-3xl font-semibold leading-tight text-bark">
-        {residency.title}
+        <EditableText value={residency.title} onCommit={(v) => set({ title: v })} />
       </h2>
-      <p className="mt-3 text-lg leading-relaxed text-bark-soft">
-        {residency.hook}
-      </p>
+      <EditableText
+        as="p"
+        multiline
+        value={residency.hook}
+        onCommit={(v) => set({ hook: v })}
+        className="mt-3 text-lg leading-relaxed text-bark-soft"
+      />
 
       {/* meta */}
-      <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-moss-deep">
+      <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-moss-deep">
         <span className="flex items-center gap-1.5">
           <Clock className="h-4 w-4 text-fern" />
-          {residency.durationDays}{" "}
-          {residency.durationDays === 1 ? "day" : "days"}
+          <EditableNumber
+            value={residency.durationDays}
+            onCommit={(n) => set({ durationDays: Math.max(1, n) })}
+          />
+          {residency.durationDays === 1 ? " day" : " days"}
         </span>
         <span className="flex items-center gap-1.5">
           <GraduationCap className="h-4 w-4 text-fern" />
-          {residency.skillLevel}
+          <EditableText
+            value={residency.skillLevel}
+            onCommit={(v) => set({ skillLevel: v })}
+          />
         </span>
         <span className="flex items-center gap-1.5">
           <Users className="h-4 w-4 text-fern" />
-          Up to {residency.groupSize} students
+          Up to{" "}
+          <EditableNumber
+            value={residency.groupSize}
+            onCommit={(n) => set({ groupSize: Math.max(1, n) })}
+          />{" "}
+          students
         </span>
       </div>
 
@@ -534,34 +572,80 @@ function ResidencyResult({
         <div className="flex items-center gap-1.5 text-sm font-semibold text-moss-deep">
           <MapPin className="h-4 w-4" /> Why this match works
         </div>
-        <p className="mt-1.5 text-sm leading-relaxed text-bark-soft">
-          {residency.whyThisMatch}
-        </p>
+        <EditableText
+          as="p"
+          multiline
+          value={residency.whyThisMatch}
+          onCommit={(v) => set({ whyThisMatch: v })}
+          className="mt-1.5 text-sm leading-relaxed text-bark-soft"
+        />
       </div>
 
-      <EarningsPanel residency={residency} />
+      <EarningsPanel residency={residency} set={set} />
 
       {/* schedule */}
       <Section title="Day by day" icon={<CalendarDays className="h-4 w-4" />}>
         <ol className="mt-2 space-y-4">
-          {residency.schedule.map((d) => (
-            <li key={d.day} className="flex gap-4">
+          {residency.schedule.map((d, di) => (
+            <li key={di} className="flex gap-4">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-moss text-sm font-semibold text-paper">
                 {d.day}
               </div>
-              <div className="border-b border-stone-soft/60 pb-4">
-                <p className="font-semibold text-bark">{d.title}</p>
+              <div className="flex-1 border-b border-stone-soft/60 pb-4">
+                <EditableText
+                  value={d.title}
+                  onCommit={(v) =>
+                    set({
+                      schedule: residency.schedule.map((x, j) =>
+                        j === di ? { ...x, title: v } : x,
+                      ),
+                    })
+                  }
+                  className="font-semibold text-bark"
+                />
                 <ul className="mt-1 space-y-1">
-                  {d.activities.map((a, i) => (
+                  {d.activities.map((a, ai) => (
                     <li
-                      key={i}
-                      className="flex gap-2 text-sm leading-relaxed text-bark-soft"
+                      key={ai}
+                      className="group/act flex gap-2 text-sm leading-relaxed text-bark-soft"
                     >
                       <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-fern" />
-                      {a}
+                      <EditableText
+                        multiline
+                        className="flex-1"
+                        value={a}
+                        onCommit={(v) =>
+                          setActivities(
+                            di,
+                            v.trim() === ""
+                              ? d.activities.filter((_, k) => k !== ai)
+                              : d.activities.map((x, k) => (k === ai ? v : x)),
+                          )
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setActivities(
+                            di,
+                            d.activities.filter((_, k) => k !== ai),
+                          )
+                        }
+                        aria-label="Remove step"
+                        className="text-stone opacity-0 transition-opacity hover:text-clay group-hover/act:opacity-100"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
                     </li>
                   ))}
                 </ul>
+                <button
+                  type="button"
+                  onClick={() => setActivities(di, [...d.activities, "New step"])}
+                  className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-moss hover:text-moss-deep"
+                >
+                  <Plus className="h-3 w-3" /> Add step
+                </button>
               </div>
             </li>
           ))}
@@ -574,24 +658,28 @@ function ResidencyResult({
           icon={<GraduationCap className="h-4 w-4" />}
           items={residency.studentOutcomes}
           tone="moss"
+          onChange={(n) => setList("studentOutcomes", n)}
         />
         <ListBlock
           title="What the land gains"
           icon={<Leaf className="h-4 w-4" />}
           items={residency.landImpact}
           tone="clay"
+          onChange={(n) => setList("landImpact", n)}
         />
         <ListBlock
           title="Materials & tools"
           icon={<Hammer className="h-4 w-4" />}
           items={residency.materials}
           tone="moss"
+          onChange={(n) => setList("materials", n)}
         />
         <ListBlock
           title="What to bring"
           icon={<Backpack className="h-4 w-4" />}
           items={residency.whatToBring}
           tone="moss"
+          onChange={(n) => setList("whatToBring", n)}
         />
       </div>
 
@@ -607,22 +695,31 @@ function ResidencyResult({
               text={`${residency.title}\n\n${residency.listingDescription}\n\nWho it's for: ${residency.idealStudent}`}
             />
           </div>
-          {residency.listingDescription.split("\n\n").map((p, i) => (
-            <p key={i} className="mt-2 text-sm leading-relaxed text-bark-soft">
-              {p}
-            </p>
-          ))}
+          <EditableText
+            as="div"
+            multiline
+            value={residency.listingDescription}
+            onCommit={(v) => set({ listingDescription: v })}
+            className="mt-2 text-sm leading-relaxed text-bark-soft"
+          />
           <p className="mt-3 text-sm text-bark">
             <span className="font-semibold">Who it&apos;s for:</span>{" "}
-            {residency.idealStudent}
+            <EditableText
+              value={residency.idealStudent}
+              onCommit={(v) => set({ idealStudent: v })}
+            />
           </p>
           <div className="mt-3 rounded-lg bg-fern/10 p-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-moss-deep">
               Share it
             </p>
-            <p className="mt-1 text-sm italic text-bark-soft">
-              {residency.socialBlurb}
-            </p>
+            <EditableText
+              as="p"
+              multiline
+              value={residency.socialBlurb}
+              onCommit={(v) => set({ socialBlurb: v })}
+              className="mt-1 text-sm italic text-bark-soft"
+            />
           </div>
         </div>
       </Section>
@@ -637,9 +734,13 @@ function ResidencyResult({
             <p className="text-sm font-semibold text-bark">Ready to send</p>
             <CopyButton label="Copy message" text={residency.hostPitch} />
           </div>
-          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-bark-soft">
-            {residency.hostPitch}
-          </p>
+          <EditableText
+            as="div"
+            multiline
+            value={residency.hostPitch}
+            onCommit={(v) => set({ hostPitch: v })}
+            className="mt-2 text-sm leading-relaxed text-bark-soft"
+          />
         </div>
       </Section>
 
@@ -675,11 +776,13 @@ function ListBlock({
   icon,
   items,
   tone,
+  onChange,
 }: {
   title: string;
   icon: React.ReactNode;
   items: string[];
   tone: "moss" | "clay";
+  onChange: (next: string[]) => void;
 }) {
   return (
     <div>
@@ -696,7 +799,7 @@ function ListBlock({
         {items.map((item, i) => (
           <li
             key={i}
-            className="flex gap-2 text-sm leading-relaxed text-bark-soft"
+            className="group/li flex gap-2 text-sm leading-relaxed text-bark-soft"
           >
             <Check
               className={cn(
@@ -704,10 +807,36 @@ function ListBlock({
                 tone === "moss" ? "text-fern" : "text-clay",
               )}
             />
-            {item}
+            <EditableText
+              multiline
+              className="flex-1"
+              value={item}
+              onCommit={(v) =>
+                onChange(
+                  v.trim() === ""
+                    ? items.filter((_, j) => j !== i)
+                    : items.map((x, j) => (j === i ? v : x)),
+                )
+              }
+            />
+            <button
+              type="button"
+              onClick={() => onChange(items.filter((_, j) => j !== i))}
+              aria-label="Remove"
+              className="text-stone opacity-0 transition-opacity hover:text-clay group-hover/li:opacity-100"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
           </li>
         ))}
       </ul>
+      <button
+        type="button"
+        onClick={() => onChange([...items, "New point"])}
+        className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-moss hover:text-moss-deep"
+      >
+        <Plus className="h-3 w-3" /> Add
+      </button>
     </div>
   );
 }
@@ -717,27 +846,70 @@ function ListBlock({
 const PLATFORM_FEE = 0.1;
 const HOST_SHARE = 0.15;
 
-function EarningsPanel({ residency }: { residency: DesignedResidency }) {
+function EarningsPanel({
+  residency,
+  set,
+}: {
+  residency: DesignedResidency;
+  set: (patch: Partial<DesignedResidency>) => void;
+}) {
   const [students, setStudents] = useState(residency.groupSize);
-  const gross = students * residency.suggestedPrice;
+  const enrolled = Math.min(students, residency.groupSize);
+  const gross = enrolled * residency.suggestedPrice;
   const platform = gross * PLATFORM_FEE;
   const hostShare = gross * HOST_SHARE;
-  const materials = students * residency.materialsCostPerStudent;
+  const materials = enrolled * residency.materialsCostPerStudent;
   const takeHome = Math.max(0, gross - platform - hostShare - materials);
+
+  const priceInput =
+    "w-20 rounded border border-stone-soft bg-paper px-2 py-1 text-right text-bark outline-none focus:border-moss focus:ring-1 focus:ring-fern/40";
 
   return (
     <div className="mt-7 rounded-2xl border border-ochre/40 bg-ochre/10 p-5">
       <div className="flex items-center gap-1.5 font-display text-lg font-semibold text-bark">
         <Wallet className="h-5 w-5 text-clay" /> What you could earn
       </div>
-      <p className="mt-1 text-sm leading-relaxed text-bark-soft">
-        {residency.pricingRationale}
-      </p>
+      <EditableText
+        as="p"
+        multiline
+        value={residency.pricingRationale}
+        onCommit={(v) => set({ pricingRationale: v })}
+        className="mt-1 text-sm leading-relaxed text-bark-soft"
+      />
 
-      <div className="mt-4 flex items-baseline justify-between text-sm">
-        <span className="text-bark-soft">Suggested price per student</span>
-        <span className="font-semibold text-bark">
-          {formatPrice(residency.suggestedPrice)}
+      <div className="mt-4 flex items-center justify-between text-sm">
+        <span className="text-bark-soft">Price per student</span>
+        <span className="flex items-center gap-1 font-semibold text-bark">
+          €
+          <input
+            type="number"
+            min={0}
+            value={residency.suggestedPrice}
+            onChange={(e) =>
+              set({ suggestedPrice: Math.max(0, Math.round(Number(e.target.value) || 0)) })
+            }
+            className={priceInput}
+            aria-label="Price per student"
+          />
+        </span>
+      </div>
+
+      <div className="mt-2.5 flex items-center justify-between text-sm">
+        <span className="text-bark-soft">Materials cost per student</span>
+        <span className="flex items-center gap-1 font-semibold text-bark">
+          €
+          <input
+            type="number"
+            min={0}
+            value={residency.materialsCostPerStudent}
+            onChange={(e) =>
+              set({
+                materialsCostPerStudent: Math.max(0, Math.round(Number(e.target.value) || 0)),
+              })
+            }
+            className={priceInput}
+            aria-label="Materials cost per student"
+          />
         </span>
       </div>
 
@@ -747,14 +919,14 @@ function EarningsPanel({ residency }: { residency: DesignedResidency }) {
             <Users className="h-4 w-4 text-fern" /> Students enrolled
           </label>
           <span className="font-semibold text-bark">
-            {students} of {residency.groupSize}
+            {enrolled} of {residency.groupSize}
           </span>
         </div>
         <input
           type="range"
           min={1}
           max={residency.groupSize}
-          value={students}
+          value={enrolled}
           onChange={(e) => setStudents(Number(e.target.value))}
           className="mt-2 w-full accent-moss"
           aria-label="Students enrolled"
@@ -779,7 +951,7 @@ function EarningsPanel({ residency }: { residency: DesignedResidency }) {
         </span>
       </div>
       <p className="mt-1 text-right text-xs text-bark-soft">
-        about {formatPrice(students > 0 ? takeHome / students : 0)} per student
+        about {formatPrice(enrolled > 0 ? takeHome / enrolled : 0)} per student
       </p>
     </div>
   );
@@ -830,5 +1002,70 @@ function EarningsRow({
         {value}
       </dd>
     </div>
+  );
+}
+
+/** Click-to-edit text. Commits on blur, so React never fights the cursor. */
+function EditableText({
+  value,
+  onCommit,
+  className,
+  multiline = false,
+  as = "span",
+}: {
+  value: string;
+  onCommit: (v: string) => void;
+  className?: string;
+  multiline?: boolean;
+  as?: "span" | "p" | "div";
+}) {
+  const Tag: React.ElementType = as;
+  return (
+    <Tag
+      contentEditable
+      suppressContentEditableWarning
+      role="textbox"
+      tabIndex={0}
+      onBlur={(e: React.FocusEvent<HTMLElement>) => {
+        const el = e.currentTarget;
+        const raw = multiline ? el.innerText : (el.textContent ?? "");
+        const text = raw.replace(/ /g, " ").replace(/\n{3,}/g, "\n\n").trim();
+        if (text !== value) onCommit(text);
+      }}
+      onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+        if (!multiline && e.key === "Enter") {
+          e.preventDefault();
+          e.currentTarget.blur();
+        }
+      }}
+      className={cn(
+        "cursor-text rounded-[5px] px-0.5 outline-none transition-colors hover:bg-fern/10 focus:bg-fern/15 focus:ring-1 focus:ring-fern/40",
+        multiline && "block whitespace-pre-line",
+        className,
+      )}
+    >
+      {value}
+    </Tag>
+  );
+}
+
+function EditableNumber({
+  value,
+  onCommit,
+  className,
+}: {
+  value: number;
+  onCommit: (n: number) => void;
+  className?: string;
+}) {
+  return (
+    <EditableText
+      className={cn("font-semibold", className)}
+      value={String(value)}
+      onCommit={(v) => {
+        const n = parseInt(v.replace(/[^0-9]/g, ""), 10);
+        if (!Number.isNaN(n)) onCommit(n);
+      }}
+    />
   );
 }
