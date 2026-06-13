@@ -24,7 +24,7 @@ export function SiteHeader() {
           <img
             src="/grass-roots-logo.svg"
             alt="Grass Roots"
-            className="h-11 w-auto sm:h-12"
+            className="h-12 w-auto sm:h-14"
           />
         </Link>
 
