@@ -24,6 +24,8 @@ export const hosts: Host[] = [
     ],
     amenities: ["Off-grid solar", "Wood stove", "Spring water", "Forest garden"],
     inspiredBy: "Fairytale Cob House, Scotland (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/hideaway/51-fairytale-cob-house.html",
   },
   {
     id: "quinta-abelhas",
@@ -48,6 +50,8 @@ export const hosts: Host[] = [
     ],
     amenities: ["Apiary", "Dry-stone terraces", "Wood-fired kitchen", "Mountain trails"],
     inspiredBy: "The Hoopoe Cabin · Quinta das Abelhas, Portugal (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/quinta-das-abelhas/110-the-hoopoe-cabin.html",
   },
   {
     id: "la-goursaline",
@@ -72,6 +76,8 @@ export const hosts: Host[] = [
     ],
     amenities: ["Yurts", "Food forest", "Ponds", "Wood stoves"],
     inspiredBy: "Hillside Yurt · La Goursaline, France (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/french-hillside-permaculture-farmstay/83-hillside-yurt-between-meadow-and-forest.html",
   },
   {
     id: "tuscan-cestaio",
@@ -96,6 +102,8 @@ export const hosts: Host[] = [
     ],
     amenities: ["Stone farmhouse", "Vineyards", "Olive groves", "Herb gardens"],
     inspiredBy: "Wild Tuscan Agriturismo: Cestaio, Italy (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/bioagriturismo-reggioli/111-wild-tuscan-agriturismo-cestaio.html",
   },
   {
     id: "andalusian-ecovillage",
@@ -120,6 +128,8 @@ export const hosts: Host[] = [
     ],
     amenities: ["Yurts", "Communal kitchen", "Workshop", "Spring-fed water"],
     inspiredBy: "Andalusian Ecovillage in Formation, Spain (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/gh/75-andalusian-ecovillage-in-formation.html",
   },
   {
     id: "arran-rewilding",
@@ -144,6 +154,8 @@ export const hosts: Host[] = [
     ],
     amenities: ["Yurts", "Orchard meadow", "Wild coastline", "Solar lighting"],
     inspiredBy: "Among Arran's Ancient Ecology · Rùnach Àrainn, UK (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/runach-arainn-glamping/107-among-arrans-ancient-ecology.html",
   },
   {
     id: "ecosystem-collective",
@@ -168,6 +180,8 @@ export const hosts: Host[] = [
     ],
     amenities: ["Heritage cottage", "Timber workshop", "Native nursery", "River access"],
     inspiredBy: "Outdoor Living on Ecosystem Collective, Portugal (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/quinta-abelhas/93-outdoor-living-on-ecosystem-collective.html",
   },
   {
     id: "lochem-demo-farm",
@@ -192,6 +206,8 @@ export const hosts: Host[] = [
     ],
     amenities: ["Food forest", "Campground", "Barns & tools", "Demonstration plots"],
     inspiredBy: "Small Caravan, Big Transition · Lochem, Netherlands (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/gemeenschapsboerderij-t-gagel/102-small-caravan-big-transition.html",
   },
   {
     id: "alcolea-sanctuary",
@@ -216,5 +232,7 @@ export const hosts: Host[] = [
     ],
     amenities: ["Off-grid solar", "Cistern & wells", "Dry-climate beds", "Quiet hills"],
     inspiredBy: "Off-grid Rewilding Sanctuary, Spain (GoHabitat)",
+    listingUrl:
+      "https://www.gohabitat.earth/wild-spirit-eco-cultural-farm/87-off-grid-rewilding-sanctuary.html",
   },
 ];

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { MapPin, Sprout, Home, Check, Sparkles } from "lucide-react";
+import { MapPin, Sprout, Home, Check, Sparkles, ExternalLink } from "lucide-react";
 import { hosts, getHostBySlug, getCoursesByHost } from "@/lib/data";
 import { CourseCard } from "@/components/course-card";
 
@@ -133,11 +133,23 @@ export default async function HostProfilePage({
               <Sparkles className="h-4 w-4" />
               Design a residency here
             </Link>
+
+            {host.listingUrl && (
+              <a
+                href={host.listingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-full border border-moss/30 px-5 py-2.5 text-sm font-semibold text-moss-deep transition-colors hover:bg-fern/10"
+              >
+                View the original on GoHabitat
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            )}
           </div>
 
           {host.inspiredBy && (
             <p className="mt-3 px-2 text-xs leading-relaxed text-stone">
-              Site inspired by {host.inspiredBy}.
+              This site is adapted from {host.inspiredBy}.
             </p>
           )}
         </aside>

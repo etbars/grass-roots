@@ -48,6 +48,8 @@ export interface Host {
   amenities: string[];
   /** Lightly adapted from the GoHabitat listing this host is inspired by. */
   inspiredBy?: string;
+  /** Link to the real GoHabitat listing this host is based on. */
+  listingUrl?: string;
 }
 
 export interface Teacher {
