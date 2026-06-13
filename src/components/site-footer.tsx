@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Logo } from "@/components/logo";
 
 const footerNav = [
   {
@@ -25,12 +24,12 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-stone-soft/70 bg-moss-deep text-paper/90">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr]">
         <div className="max-w-sm">
-          <div className="flex items-center gap-2">
-            <Logo className="h-7 w-7 text-wheat" />
-            <span className="font-display text-xl font-semibold text-paper">
-              Grass Roots
-            </span>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/grass-roots-logo-light.svg"
+            alt="Grass Roots"
+            className="h-14 w-auto"
+          />
           <p className="mt-4 text-sm leading-relaxed text-paper/70">
             Real-world education rooted in land, craft, and community. Learn by
             doing, teach by living, and grow regenerative projects around the

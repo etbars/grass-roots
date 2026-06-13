@@ -1,0 +1,40 @@
+<svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grass Roots horizontal logo">
+  <defs>
+    <style>
+      .stamp { fill: none; stroke: #f5f1e6; }
+      .leaf  { fill: #6f9159; stroke: #f5f1e6; stroke-width: 3.5; stroke-linejoin: round; }
+      .root  { fill: none; stroke: #e8d9b5; stroke-linecap: round; stroke-linejoin: round; }
+      .stem  { fill: none; stroke: #f5f1e6; stroke-linecap: round; }
+      .word  { fill: #f5f1e6; font-family: Georgia, 'Times New Roman', serif; font-weight: 700; }
+      .tag   { fill: #e8d9b5; font-family: Georgia, 'Times New Roman', serif; font-style: italic; }
+      .seed  { fill: #e8d9b5; }
+    </style>
+  </defs>
+
+  <!-- circular hand-drawn stamp -->
+  <circle class="stamp" cx="120" cy="120" r="92" stroke-width="5"/>
+  <circle class="stamp" cx="120" cy="120" r="82" stroke-width="2" stroke-dasharray="2 7"/>
+
+  <!-- ground line through circle -->
+  <path class="stem" stroke-width="4" d="M58 124 C 86 119 104 126 120 123 C 140 120 158 127 182 122"/>
+
+  <!-- sprout -->
+  <path class="stem" stroke-width="5" d="M120 122 C 119 98 121 82 120 64"/>
+  <path class="leaf" d="M120 98 C 96 84 74 88 66 104 C 84 116 110 114 120 98 Z"/>
+  <path class="leaf" d="M120 84 C 144 66 168 68 178 84 C 162 100 136 102 120 84 Z"/>
+  <path class="leaf" d="M120 66 C 113 50 117 36 127 30 C 134 44 130 58 120 66 Z"/>
+
+  <!-- roots below ground -->
+  <path class="root" stroke-width="5" d="M120 124 C 121 144 119 156 120 170"/>
+  <path class="root" stroke-width="4" d="M120 150 C 104 160 92 174 88 192"/>
+  <path class="root" stroke-width="4" d="M120 150 C 138 160 150 174 154 192"/>
+  <path class="root" stroke-width="3" d="M120 170 C 114 184 112 196 114 206"/>
+  <circle class="seed" cx="86" cy="194" r="3"/>
+  <circle class="seed" cx="156" cy="194" r="3"/>
+  <circle class="seed" cx="114" cy="208" r="3"/>
+
+  <!-- wordmark lockup -->
+  <text class="word" x="248" y="116" font-size="62" letter-spacing="1">Grass Roots</text>
+  <line x1="250" y1="142" x2="664" y2="142" stroke="#e8d9b5" stroke-width="2.5" stroke-linecap="round"/>
+  <text class="tag" x="250" y="176" font-size="22" letter-spacing="3">learn by doing · teach by living</text>
+</svg>

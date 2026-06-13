@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -20,15 +19,13 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-stone-soft/70 bg-cream/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3.5 sm:px-8">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-moss-deep"
-          onClick={() => setOpen(false)}
-        >
-          <Logo className="h-7 w-7 text-moss" />
-          <span className="font-display text-xl font-semibold tracking-tight">
-            Grass Roots
-          </span>
+        <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/grass-roots-logo.svg"
+            alt="Grass Roots"
+            className="h-11 w-auto sm:h-12"
+          />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
