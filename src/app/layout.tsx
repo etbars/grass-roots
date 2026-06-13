@@ -18,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Grass Roots — Learn by doing. Teach by living.",
+  title: "Grass Roots · Learn by doing. Teach by living.",
   description:
     "A three-sided marketplace for hands-on learning at regenerative farms, homesteads, eco-building sites and permaculture projects. Discover teacher residencies and courses rooted in land, craft, and community.",
 };

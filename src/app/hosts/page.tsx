@@ -5,7 +5,7 @@ import { MapPin, ArrowRight } from "lucide-react";
 import { hosts, getCoursesByHost } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Host sites — Grass Roots",
+  title: "Host sites · Grass Roots",
   description:
     "Regenerative farms, homesteads, eco-villages and rewilding projects opening their land to courses and teacher residencies.",
 };
@@ -18,7 +18,7 @@ export default function HostsPage() {
           Living landscapes
         </h1>
         <p className="mt-3 text-lg leading-relaxed text-bark-soft">
-          Real places with real projects — opening their land to teachers and
+          Real places with real projects, opening their land to teachers and
           students who want to learn by helping them grow.
         </p>
       </header>

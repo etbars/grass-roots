@@ -7,7 +7,7 @@ import { CategoryIcon } from "@/components/category-icon";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Courses & residencies — Grass Roots",
+  title: "Courses & residencies · Grass Roots",
   description:
     "Browse immersive, hands-on courses and teacher residencies at regenerative farms, homesteads and eco-building projects.",
 };

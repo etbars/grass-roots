@@ -21,7 +21,7 @@ export const teachers: Teacher[] = [
     image: "/images/teacher-tomas.jpg",
     headline: "Cob & earthen building craftsman",
     skills: ["natural-building"],
-    bio: "Tomás builds with what the land offers — clay, straw, stone, and timber. He has led the construction of more than forty natural structures and loves the moment a student first shapes a wall with their hands.",
+    bio: "Tomás builds with what the land offers: clay, straw, stone, and timber. He has led the construction of more than forty natural structures and loves the moment a student first shapes a wall with their hands.",
     basedIn: "Serra da Estrela, Portugal",
     yearsTeaching: 9,
     rating: 4.9,

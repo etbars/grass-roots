@@ -17,8 +17,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const host = getHostBySlug(slug);
-  if (!host) return { title: "Host not found — Grass Roots" };
-  return { title: `${host.name} — Grass Roots`, description: host.tagline };
+  if (!host) return { title: "Host not found · Grass Roots" };
+  return { title: `${host.name} · Grass Roots`, description: host.tagline };
 }
 
 export default async function HostProfilePage({

@@ -27,7 +27,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "Mornings in the apiary, evenings around the fire with people who became friends. Best trip I've ever taken — and I can keep bees now.",
+      "Mornings in the apiary, evenings around the fire with people who became friends. Best trip I've ever taken, and I can keep bees now.",
     name: "Priya N.",
     detail: "Beekeeping Basics · Portugal",
   },
@@ -75,9 +75,9 @@ export default function Home() {
               projects.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper/85">
-              Travel to a real place and learn a craft by doing — taught by the
-              people who live it. Permaculture, natural building, beekeeping,
-              herbalism, and more.
+              Pack a bag, pick a craft, and learn it by doing at a regenerative
+              farm, homestead, or build site, taught by the people who live it.
+              Permaculture, natural building, beekeeping, herbalism, and more.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -181,13 +181,13 @@ export default function Home() {
                 icon: GraduationCap,
                 role: "Students",
                 verb: "learn by doing",
-                text: "Travel to a real place and gain hands-on skills, a portfolio, and a community — by helping a living landscape thrive.",
+                text: "Travel to a real place and gain hands-on skills, a portfolio, and a community, by helping a living landscape thrive.",
               },
               {
                 icon: Users,
                 role: "Hosts",
                 verb: "open their land",
-                text: "Regenerative farms and projects host courses — gaining momentum, community, exposure, and revenue.",
+                text: "Regenerative farms and projects host courses, gaining momentum, community, exposure, and revenue.",
               },
             ].map((item) => (
               <div
@@ -211,7 +211,7 @@ export default function Home() {
             ))}
           </div>
           <p className="mx-auto mt-8 max-w-xl text-center text-sm italic text-moss-deep">
-            The work students do is real and the land genuinely benefits — but
+            The work students do is real and the land genuinely benefits, but
             the learning, mentorship, and community always come first.
           </p>
         </div>
@@ -295,7 +295,7 @@ export default function Home() {
               </h2>
               <p className="mt-4 max-w-xl text-paper/80">
                 Tell us what you teach and pick a host site, and we&apos;ll pair
-                your craft with the land&apos;s real projects — drafting a
+                your craft with the land&apos;s real projects, drafting a
                 complete course with a day-by-day schedule, student outcomes, and
                 lasting impact.
               </p>

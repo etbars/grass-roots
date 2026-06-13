@@ -23,8 +23,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const teacher = getTeacherBySlug(slug);
-  if (!teacher) return { title: "Teacher not found — Grass Roots" };
-  return { title: `${teacher.name} — Grass Roots`, description: teacher.headline };
+  if (!teacher) return { title: "Teacher not found · Grass Roots" };
+  return { title: `${teacher.name} · Grass Roots`, description: teacher.headline };
 }
 
 export default async function TeacherProfilePage({

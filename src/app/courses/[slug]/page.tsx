@@ -34,8 +34,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const course = getCourseBySlug(slug);
-  if (!course) return { title: "Course not found — Grass Roots" };
-  return { title: `${course.title} — Grass Roots`, description: course.summary };
+  if (!course) return { title: "Course not found · Grass Roots" };
+  return { title: `${course.title} · Grass Roots`, description: course.summary };
 }
 
 const FORMAT_LABEL: Record<string, string> = {
@@ -224,7 +224,7 @@ export default async function CourseDetailPage({
               <ApplyButton courseTitle={course.title} />
             </div>
             <p className="mt-3 text-center text-xs text-bark-soft">
-              No payment today — the teacher confirms your place first.
+              No payment today. The teacher confirms your place first.
             </p>
           </div>
         </aside>

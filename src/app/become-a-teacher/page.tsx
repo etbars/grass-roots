@@ -13,7 +13,7 @@ import { categories } from "@/lib/data";
 import { CategoryIcon } from "@/components/category-icon";
 
 export const metadata: Metadata = {
-  title: "Become a teacher — Grass Roots",
+  title: "Become a teacher · Grass Roots",
   description:
     "Anyone can become a teacher on Grass Roots. Learn by doing, earn a certification in your craft, then teach residencies of your own.",
 };
@@ -23,14 +23,14 @@ const STEPS = [
     icon: GraduationCap,
     step: "01",
     title: "Learn by doing",
-    body: "Start as a student. Take day courses, weekend workshops, and residencies in the craft you love — building real, hands-on skill and a portfolio of work you can point to.",
+    body: "Start as a student. Take day courses, weekend workshops, and residencies in the craft you love, building real, hands-on skill and a portfolio of work you can point to.",
     cta: { href: "/courses", label: "Browse courses" },
   },
   {
     icon: BadgeCheck,
     step: "02",
     title: "Earn your certification",
-    body: "Complete the core courses in your craft and a hands-on capstone residency. Experienced teachers sign off on your work, and you become a Grass Roots Certified practitioner — qualified to teach.",
+    body: "Complete the core courses in your craft and a hands-on capstone residency. Experienced teachers sign off on your work, and you become a Grass Roots Certified practitioner, qualified to teach.",
     cta: null,
   },
   {
@@ -56,7 +56,7 @@ export default function BecomeATeacherPage() {
               Anyone can become a teacher.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-bark-soft">
-              You don&apos;t need a diploma or a title — you need the skill, and
+              You don&apos;t need a diploma or a title. You need the skill, and
               the willingness to share it. On Grass Roots, today&apos;s students
               become tomorrow&apos;s teachers. Here&apos;s the path.
             </p>
@@ -192,7 +192,7 @@ export default function BecomeATeacherPage() {
               Earned by doing, not by exam
             </h3>
             <p className="mt-3 leading-relaxed text-bark-soft">
-              Certification on Grass Roots means you&apos;ve done the work — in
+              Certification on Grass Roots means you&apos;ve done the work: in
               the field, with your hands, on real projects. It&apos;s a mark of
               practical competence that students and host sites can trust.
             </p>
@@ -202,7 +202,7 @@ export default function BecomeATeacherPage() {
               "Complete the core courses in your chosen craft",
               "Finish a hands-on capstone residency on a host site",
               "Get your work reviewed by experienced certified teachers",
-              "Earn a verifiable certification — and the right to teach",
+              "Earn a verifiable certification, and the right to teach",
             ].map((item) => (
               <li key={item} className="flex gap-2.5 text-bark">
                 <Check className="mt-1 h-4 w-4 shrink-0 text-fern" />

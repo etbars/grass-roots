@@ -11,7 +11,7 @@ export const hosts: Host[] = [
     sizeHa: 4,
     image: "/images/cabin-redhill.jpg",
     story:
-      "A hand-built cob cottage with curved walls sits at the heart of a young forest garden on a small Scottish holding. The land is slowly being shaped into a productive, biodiverse haven — and there's always something to build, plant, or mend.",
+      "A hand-built cob cottage with curved walls sits at the heart of a young forest garden on a small Scottish holding. The land is slowly being shaped into a productive, biodiverse haven, and there's always something to build, plant, or mend.",
     needs: [
       "Restore and extend the forest-garden swales to slow water on the slope",
       "Build a cob bread oven and outdoor cooking shelter",
@@ -193,7 +193,7 @@ export const hosts: Host[] = [
     sizeHa: 45,
     image: "/images/farm-work.jpg",
     story:
-      "A working demonstration farm showing what regenerative agriculture can do at scale — food forests, edible landscapes, and a campground where visitors learn by walking the fields. There's always a trial, a harvest, or a build underway.",
+      "A working demonstration farm showing what regenerative agriculture can do at scale: food forests, edible landscapes, and a campground where visitors learn by walking the fields. There's always a trial, a harvest, or a build underway.",
     needs: [
       "Set up a mushroom cultivation yard using farm waste",
       "Expand the edible food-forest planting",

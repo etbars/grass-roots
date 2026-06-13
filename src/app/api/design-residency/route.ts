@@ -23,6 +23,7 @@ Design principles — follow all of them:
 - Be concrete and specific to THIS place, THIS skill, and THESE projects. Use the site's real context. No generic filler.
 - Make the day-by-day schedule build progressively: orientation and fundamentals first, hands-on practice in the middle, a real finished outcome by the end.
 - Warm, grounded, practical voice. Real-world craft, not corporate training.
+- Never use em dashes (the "—" character) anywhere in your writing. Use commas, colons, or periods instead.
 
 OUTPUT CONTRACT — this is strict:
 Respond with a SINGLE valid JSON object and NOTHING else. No markdown, no code fences, no commentary before or after. Use exactly these keys:
@@ -97,7 +98,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         error:
-          "The Residency Studio isn't configured yet — set ANTHROPIC_API_KEY in the site's environment variables.",
+          "The Residency Studio isn't configured yet. Set ANTHROPIC_API_KEY in the site's environment variables.",
       },
       { status: 503 },
     );

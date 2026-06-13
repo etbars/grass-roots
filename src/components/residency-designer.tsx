@@ -159,7 +159,7 @@ export function ResidencyDesigner({
         </h2>
         <p className="mt-1.5 text-sm leading-relaxed text-bark-soft">
           Tell us your skill and pick a host site. We&apos;ll design a complete
-          teacher residency — matched to the land&apos;s real projects.
+          teacher residency, matched to the land&apos;s real projects.
         </p>
 
         <div className="mt-6 space-y-5">
@@ -198,7 +198,7 @@ export function ResidencyDesigner({
             >
               {hosts.map((h) => (
                 <option key={h.id} value={h.id}>
-                  {h.name} — {h.location.place}, {h.location.country}
+                  {h.name} · {h.location.place}, {h.location.country}
                 </option>
               ))}
             </select>
@@ -315,8 +315,8 @@ function DesignerEmptyState() {
         Your residency appears here
       </h3>
       <p className="mt-2 max-w-sm text-sm leading-relaxed text-bark-soft">
-        Pick a skill and a host site, then watch a complete residency — schedule,
-        outcomes, and real impact on the land — take shape.
+        Pick a skill and a host site, then watch a complete residency take shape,
+        with a schedule, outcomes, and real impact on the land.
       </p>
     </div>
   );
@@ -363,7 +363,7 @@ function DesignerLiveState({
       <div className="mt-6 flex items-center gap-2 text-sm text-moss">
         <CalendarDays className="h-4 w-4" />
         {daysPlanned > 0
-          ? `Mapping the day-by-day — ${daysPlanned} ${
+          ? `Mapping the day-by-day · ${daysPlanned} ${
               daysPlanned === 1 ? "day" : "days"
             } so far…`
           : "Composing the day-by-day plan…"}
