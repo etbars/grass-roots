@@ -177,6 +177,33 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ---------- Student to teacher ---------- */}
+      <section className="mx-auto max-w-7xl px-5 pt-6 sm:px-8">
+        <Link
+          href="/become-a-teacher"
+          className="group flex flex-col items-start justify-between gap-4 rounded-3xl border border-stone-soft bg-paper p-7 shadow-soft sm:flex-row sm:items-center"
+        >
+          <div className="flex items-center gap-4">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-fern/12 text-moss">
+              <Sprout className="h-6 w-6" />
+            </span>
+            <div>
+              <h2 className="font-display text-xl font-semibold text-bark">
+                New here? Grow into teaching.
+              </h2>
+              <p className="mt-0.5 text-sm text-bark-soft">
+                Start as a student, earn a certification in your craft, and
+                become a teacher.
+              </p>
+            </div>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-moss px-5 py-2.5 text-sm font-semibold text-paper transition-colors group-hover:bg-moss-deep">
+            Become a teacher
+            <ArrowRight className="h-4 w-4" />
+          </span>
+        </Link>
+      </section>
+
       {/* ---------- AI designer teaser ---------- */}
       <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
         <div className="overflow-hidden rounded-3xl bg-moss-deep text-paper">

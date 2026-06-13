@@ -13,9 +13,9 @@ const footerNav = [
   {
     heading: "Contribute",
     links: [
+      { href: "/become-a-teacher", label: "Become a teacher" },
       { href: "/teach", label: "Teach a course" },
       { href: "/teach", label: "Host a residency" },
-      { href: "/#how-it-works", label: "How it works" },
     ],
   },
 ];
