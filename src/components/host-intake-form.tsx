@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Check, MapPin, Sprout } from "lucide-react";
+import { useAuth } from "@/components/auth-provider";
+import { submitHostApplication } from "@/lib/db";
 
 const LAND_TYPES = [
   "Regenerative farm",
@@ -15,12 +17,32 @@ const LAND_TYPES = [
 ];
 
 export function HostIntakeForm() {
+  const { enabled, user } = useAuth();
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [name, setName] = useState("");
   const [landType, setLandType] = useState(LAND_TYPES[0]);
   const [location, setLocation] = useState("");
   const [needs, setNeeds] = useState("");
   const [email, setEmail] = useState("");
+
+  async function handleSubmit() {
+    if (saving) return;
+    setSaving(true);
+    try {
+      if (enabled) {
+        await submitHostApplication(
+          { siteName: name, landType, location, needs, email },
+          user?.uid ?? null,
+        );
+      }
+    } catch (err) {
+      // Don't block the confirmation on a write error in the demo.
+      console.error("Host application failed to save", err);
+    }
+    setSaving(false);
+    setSubmitted(true);
+  }
 
   if (submitted) {
     return (
@@ -60,7 +82,7 @@ export function HostIntakeForm() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        setSubmitted(true);
+        void handleSubmit();
       }}
       className="rounded-2xl border border-stone-soft bg-paper p-6 shadow-soft sm:p-8"
     >
@@ -136,9 +158,10 @@ export function HostIntakeForm() {
 
       <button
         type="submit"
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep"
+        disabled={saving}
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep disabled:opacity-60"
       >
-        List my land
+        {saving ? "Sending…" : "List my land"}
         <ArrowRight className="h-4 w-4" />
       </button>
       <p className="mt-3 text-center text-xs text-stone">

@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { hosts, formatPrice } from "@/lib/data";
 import type { DesignedResidency } from "@/lib/residency-schema";
+import { SaveResidencyButton } from "@/components/save-residency-button";
 import { cn } from "@/lib/utils";
 
 type Status = "idle" | "designing" | "done" | "error";
@@ -481,6 +482,7 @@ export function ResidencyDesigner({
         {residency && status === "done" && (
           <ResidencyResult
             residency={residency}
+            hostId={host.id}
             hostName={host.name}
             onChange={setResidency}
             onRefine={refine}
@@ -573,12 +575,14 @@ type ListKey = "studentOutcomes" | "landImpact" | "materials" | "whatToBring";
 
 function ResidencyResult({
   residency,
+  hostId,
   hostName,
   onChange,
   onRefine,
   refining,
 }: {
   residency: DesignedResidency;
+  hostId: string;
   hostName: string;
   onChange: (next: DesignedResidency) => void;
   onRefine: (instruction: string) => void;
@@ -610,7 +614,16 @@ function ResidencyResult({
           <PencilRuler className="h-4 w-4" />
           Designed residency · {hostName}
         </span>
-        <span className="text-xs text-stone">Tap any text to edit</span>
+        <div className="flex items-center gap-3">
+          <span className="hidden text-xs text-stone sm:inline">
+            Tap any text to edit
+          </span>
+          <SaveResidencyButton
+            residency={residency}
+            hostId={hostId}
+            hostName={hostName}
+          />
+        </div>
       </div>
 
       <RefineBar onRefine={onRefine} refining={refining} />

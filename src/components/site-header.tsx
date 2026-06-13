@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { AccountMenu } from "@/components/account-menu";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -53,6 +54,7 @@ export function SiteHeader() {
           >
             Host a residency
           </Link>
+          <AccountMenu />
         </div>
 
         <button
@@ -98,6 +100,7 @@ export function SiteHeader() {
             >
               Host a residency
             </Link>
+            <AccountMenu variant="mobile" onNavigate={() => setOpen(false)} />
           </div>
         </nav>
       </div>

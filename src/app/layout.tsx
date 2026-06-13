@@ -3,6 +3,8 @@ import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { AuthProvider } from "@/components/auth-provider";
+import { RoleOnboarding } from "@/components/role-onboarding";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -34,9 +36,12 @@ export default function RootLayout({
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-bark">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
+        <AuthProvider>
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+          <RoleOnboarding />
+        </AuthProvider>
       </body>
     </html>
   );

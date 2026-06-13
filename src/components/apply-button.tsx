@@ -1,16 +1,98 @@
 "use client";
 
-import { useState } from "react";
-import { X, Check, Send } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X, Check, Send, CalendarCheck, Loader2 } from "lucide-react";
+import { useAuth } from "@/components/auth-provider";
+import { isReserved, reserveCourse } from "@/lib/db";
 
 export function ApplyButton({
   courseTitle,
+  courseId,
+  courseSlug,
   className,
   label = "Request to join",
 }: {
   courseTitle: string;
+  courseId?: string;
+  courseSlug?: string;
   className?: string;
   label?: string;
+}) {
+  const { enabled, user } = useAuth();
+  const baseClass =
+    className ??
+    "w-full rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-clay-deep";
+
+  // ---- Signed-in: reserve straight to the account ----
+  const canReserve = enabled && user && courseId && courseSlug;
+  const [reserved, setReserved] = useState(false);
+  const [reserving, setReserving] = useState(false);
+
+  useEffect(() => {
+    if (canReserve) {
+      void isReserved(user!.uid, courseId!).then(setReserved);
+    }
+  }, [canReserve, user, courseId]);
+
+  if (canReserve) {
+    async function reserve() {
+      if (reserving || reserved) return;
+      setReserving(true);
+      try {
+        await reserveCourse(user!.uid, {
+          id: courseId!,
+          title: courseTitle,
+          slug: courseSlug!,
+        });
+        setReserved(true);
+      } catch (err) {
+        console.error("Failed to reserve", err);
+      }
+      setReserving(false);
+    }
+    return (
+      <button
+        type="button"
+        onClick={() => void reserve()}
+        disabled={reserving || reserved}
+        className={
+          reserved
+            ? "flex w-full items-center justify-center gap-2 rounded-full bg-fern/15 px-5 py-3 text-sm font-semibold text-moss-deep"
+            : `${baseClass} flex items-center justify-center gap-2 disabled:opacity-70`
+        }
+      >
+        {reserved ? (
+          <>
+            <Check className="h-4 w-4" />
+            Spot reserved
+          </>
+        ) : reserving ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Reserving…
+          </>
+        ) : (
+          <>
+            <CalendarCheck className="h-4 w-4" />
+            Reserve a spot
+          </>
+        )}
+      </button>
+    );
+  }
+
+  // ---- Signed-out (or Firebase off): existing request-by-email flow ----
+  return <RequestModal courseTitle={courseTitle} label={label} baseClass={baseClass} />;
+}
+
+function RequestModal({
+  courseTitle,
+  label,
+  baseClass,
+}: {
+  courseTitle: string;
+  label: string;
+  baseClass: string;
 }) {
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
@@ -19,7 +101,6 @@ export function ApplyButton({
 
   function close() {
     setOpen(false);
-    // reset after the close animation
     setTimeout(() => {
       setSent(false);
       setName("");
@@ -29,14 +110,7 @@ export function ApplyButton({
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className={
-          className ??
-          "w-full rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-clay-deep"
-        }
-      >
+      <button type="button" onClick={() => setOpen(true)} className={baseClass}>
         {label}
       </button>
 
@@ -69,9 +143,8 @@ export function ApplyButton({
                 </div>
                 <p className="mt-4 text-bark">
                   Thanks{name ? `, ${name.split(" ")[0]}` : ""}! Your request to
-                  join{" "}
-                  <span className="font-semibold">{courseTitle}</span> is on its
-                  way to the teacher.
+                  join <span className="font-semibold">{courseTitle}</span> is on
+                  its way to the teacher.
                 </p>
                 <p className="mt-2 text-sm text-bark-soft">
                   They&apos;ll be in touch to confirm your place.
@@ -95,6 +168,7 @@ export function ApplyButton({
                   Tell the teacher a little about you and we&apos;ll pass along
                   your interest in{" "}
                   <span className="font-medium text-bark">{courseTitle}</span>.
+                  Tip: sign in to reserve your spot in one click.
                 </p>
                 <div>
                   <label className="text-sm font-semibold text-bark">Name</label>
@@ -106,9 +180,7 @@ export function ApplyButton({
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-bark">
-                    Email
-                  </label>
+                  <label className="text-sm font-semibold text-bark">Email</label>
                   <input
                     required
                     type="email"

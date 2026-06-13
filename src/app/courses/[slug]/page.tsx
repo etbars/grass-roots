@@ -221,7 +221,11 @@ export default async function CourseDetailPage({
             </ul>
 
             <div className="mt-6">
-              <ApplyButton courseTitle={course.title} />
+              <ApplyButton
+                courseTitle={course.title}
+                courseId={course.id}
+                courseSlug={course.slug}
+              />
             </div>
             <p className="mt-3 text-center text-xs text-bark-soft">
               No payment today. The teacher confirms your place first.
