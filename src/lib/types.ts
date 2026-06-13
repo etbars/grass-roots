@@ -41,7 +41,7 @@ export interface Host {
   sizeHa?: number;
   image: string;
   story: string;
-  /** Real, on-the-ground projects the land needs help with — feeds the AI Residency Designer. */
+  /** Real, on-the-ground projects the land needs help with — feeds the Residency Studio. */
   needs: string[];
   /** What a teacher-in-residence receives (accommodation, food, etc.) */
   offers: string[];

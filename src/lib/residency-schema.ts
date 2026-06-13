@@ -1,5 +1,5 @@
 /**
- * Shape of a residency designed by the AI Residency Designer.
+ * Shape of a residency designed in the Residency Studio.
  * Mirrored by `residencyJsonSchema` below, which constrains the model output.
  */
 export interface DesignedResidency {

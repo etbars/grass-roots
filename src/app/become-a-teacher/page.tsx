@@ -37,7 +37,7 @@ const STEPS = [
     icon: Sprout,
     step: "03",
     title: "Teach by living",
-    body: "Once certified, design your own residency with our AI designer, get matched to a host site that needs your skill, and start teaching students of your own.",
+    body: "Once certified, design your own residency in our Residency Studio, get matched to a host site that needs your skill, and start teaching students of your own.",
     cta: { href: "/teach", label: "Design a residency" },
   },
 ];

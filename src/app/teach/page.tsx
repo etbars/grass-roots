@@ -4,7 +4,7 @@ import { ResidencyDesigner } from "@/components/residency-designer";
 export const metadata: Metadata = {
   title: "Teach a course — Grass Roots",
   description:
-    "Design a teacher residency with AI. Bring your skill, pick a host site, and get a complete course matched to the land's real projects.",
+    "Design a teacher residency. Bring your skill, pick a host site, and get a complete course matched to the land's real projects.",
 };
 
 export default function TeachPage() {
@@ -18,9 +18,9 @@ export default function TeachPage() {
           Turn your skill into a residency
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-bark-soft">
-          You bring the craft. A living landscape brings the project. Our AI
-          designer pairs the two into a complete, ready-to-publish teacher
-          residency — schedule, outcomes, and real impact on the land.
+          You bring the craft. A living landscape brings the project. Our
+          Residency Studio pairs the two into a complete, ready-to-publish
+          teacher residency — schedule, outcomes, and real impact on the land.
         </p>
       </header>
 

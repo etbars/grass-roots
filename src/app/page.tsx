@@ -54,7 +54,7 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <iframe
             title="A cob house, built start to finish"
-            src="https://www.youtube-nocookie.com/embed/QwyHIoqgTrc?autoplay=1&mute=1&loop=1&playlist=QwyHIoqgTrc&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1"
+            src="https://www.youtube-nocookie.com/embed/QwyHIoqgTrc?autoplay=1&mute=1&loop=1&playlist=QwyHIoqgTrc&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&start=24"
             allow="autoplay; encrypted-media; picture-in-picture"
             aria-hidden="true"
             tabIndex={-1}
@@ -71,27 +71,28 @@ export default function Home() {
               Learn by doing · Teach by living
             </p>
             <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] text-paper sm:text-6xl">
-              Launch a teaching residency anywhere in the world.
+              Discover immersive courses on farms, homesteads, and regenerative
+              projects.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper/85">
-              Bring your craft to a regenerative farm, homestead, or building
-              project — and teach students who learn by doing alongside you.
-              We&apos;ll help you design the whole thing.
+              Travel to a real place and learn a craft by doing — taught by the
+              people who live it. Permaculture, natural building, beekeeping,
+              herbalism, and more.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/teach"
-                className="inline-flex items-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep"
-              >
-                <Sparkles className="h-4 w-4" />
-                Host a residency
-              </Link>
-              <Link
                 href="/courses"
-                className="inline-flex items-center gap-2 rounded-full border border-paper/40 px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-paper/10"
+                className="inline-flex items-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep"
               >
                 Explore courses
                 <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/teach"
+                className="inline-flex items-center gap-2 rounded-full border border-paper/40 px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-paper/10"
+              >
+                <Sparkles className="h-4 w-4" />
+                Host a residency
               </Link>
             </div>
           </div>
@@ -278,7 +279,7 @@ export default function Home() {
         </Link>
       </section>
 
-      {/* ---------- AI designer teaser ---------- */}
+      {/* ---------- Residency Studio teaser ---------- */}
       <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
         <div className="overflow-hidden rounded-3xl bg-moss-deep text-paper">
           <div className="grid items-center gap-8 p-8 sm:p-12 lg:grid-cols-[1.2fr_1fr]">
@@ -286,24 +287,24 @@ export default function Home() {
               <div className="flex items-center gap-2 text-wheat">
                 <Sparkles className="h-5 w-5" />
                 <span className="text-sm font-semibold uppercase tracking-wider">
-                  AI Residency Designer
+                  Residency Studio
                 </span>
               </div>
               <h2 className="mt-3 font-display text-3xl font-semibold leading-tight sm:text-4xl">
                 Bring a skill. We&apos;ll design the residency.
               </h2>
               <p className="mt-4 max-w-xl text-paper/80">
-                Tell us what you teach and pick a host site. Our designer pairs
-                your craft with the land&apos;s real projects and writes a
-                complete course — schedule, outcomes, and lasting impact — in
-                seconds.
+                Tell us what you teach and pick a host site, and we&apos;ll pair
+                your craft with the land&apos;s real projects — drafting a
+                complete course with a day-by-day schedule, student outcomes, and
+                lasting impact.
               </p>
               <Link
                 href="/teach"
                 className="mt-7 inline-flex items-center gap-2 rounded-full bg-wheat px-6 py-3 text-sm font-semibold text-moss-deep transition-colors hover:bg-paper"
               >
                 <Sparkles className="h-4 w-4" />
-                Try the designer
+                Build your residency
               </Link>
             </div>
             <div className="relative hidden aspect-[4/3] overflow-hidden rounded-2xl lg:block">

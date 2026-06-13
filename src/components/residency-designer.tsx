@@ -151,7 +151,7 @@ export function ResidencyDesigner({
         <div className="flex items-center gap-2 text-clay">
           <Sparkles className="h-5 w-5" />
           <span className="text-sm font-semibold uppercase tracking-wider">
-            AI Residency Designer
+            Residency Studio
           </span>
         </div>
         <h2 className="mt-2 font-display text-2xl font-semibold text-bark">
@@ -268,7 +268,7 @@ export function ResidencyDesigner({
             ) : (
               <>
                 <Sparkles className="h-4 w-4" />
-                Design with AI
+                Build my residency
               </>
             )}
           </button>
