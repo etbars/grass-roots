@@ -60,6 +60,15 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-paper/10">
+        <p className="mx-auto max-w-3xl px-5 py-3 text-center text-xs leading-relaxed text-paper/45 sm:px-8">
+          Demonstration project. Teachers, courses, and host sites shown are
+          illustrative and fictional; photographs are from Unsplash and the
+          people pictured are not affiliated with Grass Roots. Host sites are
+          adapted from GoHabitat listings.
+        </p>
+      </div>
+
+      <div className="border-t border-paper/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-5 py-5 text-xs text-paper/55 sm:flex-row sm:px-8">
           <p>© {new Date().getFullYear()} Grass Roots. Grown from the ground up.</p>
           <p className="font-display italic">
