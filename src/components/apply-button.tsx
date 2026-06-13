@@ -9,12 +9,14 @@ export function ApplyButton({
   courseTitle,
   courseId,
   courseSlug,
+  coursePath,
   className,
   label = "Request to join",
 }: {
   courseTitle: string;
   courseId?: string;
   courseSlug?: string;
+  coursePath?: string;
   className?: string;
   label?: string;
 }) {
@@ -43,6 +45,7 @@ export function ApplyButton({
           id: courseId!,
           title: courseTitle,
           slug: courseSlug!,
+          path: coursePath,
         });
         setReserved(true);
       } catch (err) {

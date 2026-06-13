@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {
   Bookmark,
   CalendarCheck,
+  Globe,
   Loader2,
   LogIn,
   ArrowRight,
@@ -16,10 +17,14 @@ import {
 } from "@/components/auth-provider";
 import {
   getMyEnrollments,
+  getMyListings,
   getMyResidencies,
   type Enrollment,
+  type PublishedListing,
   type SavedResidency,
 } from "@/lib/db";
+import { PublishResidencyButton } from "@/components/publish-residency-button";
+import { formatPrice } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 const ALL_ROLES: UserRole[] = ["student", "teacher", "host"];
@@ -28,11 +33,13 @@ export default function AccountPage() {
   const { enabled, loading, user, profile, signIn, setRoles } = useAuth();
   const [residencies, setResidencies] = useState<SavedResidency[] | null>(null);
   const [enrollments, setEnrollments] = useState<Enrollment[] | null>(null);
+  const [listings, setListings] = useState<PublishedListing[] | null>(null);
 
   useEffect(() => {
     if (!user) return;
     void getMyResidencies(user.uid).then(setResidencies);
     void getMyEnrollments(user.uid).then(setEnrollments);
+    void getMyListings(user.uid).then(setListings);
   }, [user]);
 
   if (!enabled) {
@@ -126,6 +133,39 @@ export default function AccountPage() {
         </div>
       </section>
 
+      {/* Live listings */}
+      {listings && listings.length > 0 && (
+        <section className="mt-8">
+          <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-bark">
+            <Globe className="h-5 w-5 text-fern" />
+            Your live listings
+          </h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {listings.map((l) => (
+              <Link
+                key={l.id}
+                href={`/listings/${l.id}`}
+                className="group rounded-2xl border border-stone-soft bg-paper p-5 shadow-soft transition-colors hover:border-fern"
+              >
+                <span className="inline-flex items-center gap-1 rounded-full bg-fern/12 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-moss">
+                  Live
+                </span>
+                <p className="mt-2 font-display text-lg font-semibold leading-snug text-bark group-hover:text-moss">
+                  {l.title}
+                </p>
+                <p className="mt-1 text-sm text-bark-soft">
+                  {l.hostName} · {formatPrice(l.price)}
+                </p>
+                <p className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-moss">
+                  View listing
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         {/* Saved residencies */}
         <section>
@@ -158,6 +198,13 @@ export default function AccountPage() {
                   <p className="mt-2 line-clamp-2 text-sm text-bark-soft">
                     {r.residency.hook}
                   </p>
+                  <div className="mt-3 flex justify-end">
+                    <PublishResidencyButton
+                      residency={r.residency}
+                      hostId={r.hostId}
+                      hostName={r.hostName}
+                    />
+                  </div>
                 </div>
               ))
             )}

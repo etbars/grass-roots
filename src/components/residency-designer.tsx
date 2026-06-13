@@ -26,6 +26,7 @@ import {
 import { hosts, formatPrice } from "@/lib/data";
 import type { DesignedResidency } from "@/lib/residency-schema";
 import { SaveResidencyButton } from "@/components/save-residency-button";
+import { PublishResidencyButton } from "@/components/publish-residency-button";
 import { cn } from "@/lib/utils";
 
 type Status = "idle" | "designing" | "done" | "error";
@@ -614,14 +615,17 @@ function ResidencyResult({
           <PencilRuler className="h-4 w-4" />
           Designed residency · {hostName}
         </span>
-        <div className="flex items-center gap-3">
-          <span className="hidden text-xs text-stone sm:inline">
-            Tap any text to edit
-          </span>
+        <div className="flex items-center gap-2">
           <SaveResidencyButton
             residency={residency}
             hostId={hostId}
             hostName={hostName}
+          />
+          <PublishResidencyButton
+            residency={residency}
+            hostId={hostId}
+            hostName={hostName}
+            variant="solid"
           />
         </div>
       </div>

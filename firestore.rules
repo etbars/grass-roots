@@ -23,6 +23,15 @@ service cloud.firestore {
                     && request.auth.uid == resource.data.uid;
     }
 
+    // Published listings are public to read; only the owner can write.
+    match /listings/{id} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.uid;
+      allow update, delete: if request.auth != null
+                    && request.auth.uid == resource.data.uid;
+    }
+
     // Course reservations are private to the user who made them.
     match /enrollments/{id} {
       allow create, update: if request.auth != null

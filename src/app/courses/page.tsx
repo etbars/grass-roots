@@ -4,6 +4,7 @@ import { getAllCourses, categories } from "@/lib/data";
 import type { CategoryId } from "@/lib/types";
 import { CourseCard } from "@/components/course-card";
 import { CategoryIcon } from "@/components/category-icon";
+import { PublishedListings } from "@/components/published-listings";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -50,7 +51,9 @@ export default async function CoursesPage({
         ))}
       </div>
 
-      <p className="mt-6 text-sm text-bark-soft">
+      <PublishedListings category={activeCategory ?? null} />
+
+      <p className="mt-8 text-sm text-bark-soft">
         {courses.length} {courses.length === 1 ? "experience" : "experiences"}
         {activeCategory ? ` in ${categories.find((c) => c.id === activeCategory)?.name}` : ""}
       </p>
