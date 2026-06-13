@@ -17,6 +17,10 @@ export interface DesignedResidency {
   suggestedPrice: number;
   materialsCostPerStudent: number;
   pricingRationale: string;
+  listingDescription: string;
+  idealStudent: string;
+  socialBlurb: string;
+  hostPitch: string;
 }
 
 /** JSON Schema passed to the Messages API as a structured-output constraint. */

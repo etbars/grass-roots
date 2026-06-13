@@ -16,6 +16,9 @@ import {
   Compass,
   Wallet,
   TrendingUp,
+  Copy,
+  Megaphone,
+  Send,
 } from "lucide-react";
 import { hosts, formatPrice } from "@/lib/data";
 import type { DesignedResidency } from "@/lib/residency-schema";
@@ -592,6 +595,54 @@ function ResidencyResult({
         />
       </div>
 
+      {/* Listing copy */}
+      <Section title="Your listing" icon={<Megaphone className="h-4 w-4" />}>
+        <div className="mt-2 rounded-xl border border-stone-soft bg-cream/40 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm font-semibold text-bark">
+              How students will see it
+            </p>
+            <CopyButton
+              label="Copy listing"
+              text={`${residency.title}\n\n${residency.listingDescription}\n\nWho it's for: ${residency.idealStudent}`}
+            />
+          </div>
+          {residency.listingDescription.split("\n\n").map((p, i) => (
+            <p key={i} className="mt-2 text-sm leading-relaxed text-bark-soft">
+              {p}
+            </p>
+          ))}
+          <p className="mt-3 text-sm text-bark">
+            <span className="font-semibold">Who it&apos;s for:</span>{" "}
+            {residency.idealStudent}
+          </p>
+          <div className="mt-3 rounded-lg bg-fern/10 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-moss-deep">
+              Share it
+            </p>
+            <p className="mt-1 text-sm italic text-bark-soft">
+              {residency.socialBlurb}
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* Host pitch */}
+      <Section
+        title={`Message to ${hostName}`}
+        icon={<Send className="h-4 w-4" />}
+      >
+        <div className="mt-2 rounded-xl border border-stone-soft bg-cream/40 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm font-semibold text-bark">Ready to send</p>
+            <CopyButton label="Copy message" text={residency.hostPitch} />
+          </div>
+          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-bark-soft">
+            {residency.hostPitch}
+          </p>
+        </div>
+      </Section>
+
       <button className="mt-8 w-full rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-clay-deep">
         Publish this residency
       </button>
@@ -731,6 +782,35 @@ function EarningsPanel({ residency }: { residency: DesignedResidency }) {
         about {formatPrice(students > 0 ? takeHome / students : 0)} per student
       </p>
     </div>
+  );
+}
+
+function CopyButton({ text, label }: { text: string; label: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1800);
+        } catch {
+          // clipboard unavailable; ignore
+        }
+      }}
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-soft px-3 py-1.5 text-xs font-semibold text-bark-soft transition-colors hover:border-fern hover:text-moss"
+    >
+      {copied ? (
+        <>
+          <Check className="h-3.5 w-3.5 text-fern" /> Copied
+        </>
+      ) : (
+        <>
+          <Copy className="h-3.5 w-3.5" /> {label}
+        </>
+      )}
+    </button>
   );
 }
 
