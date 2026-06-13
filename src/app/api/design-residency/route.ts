@@ -4,6 +4,8 @@ import { getHost } from "@/lib/data";
 export const runtime = "nodejs";
 // This route streams a model response — never cache it.
 export const dynamic = "force-dynamic";
+// Allow the streamed generation a bit longer before the platform cuts it.
+export const maxDuration = 26;
 
 interface DesignRequest {
   hostId: string;
@@ -26,6 +28,7 @@ Design principles — follow all of them:
 - Never use em dashes (the "—" character) anywhere in your writing. Use commas, colons, or periods instead.
 - Suggest a realistic price a student would happily pay for this format, skill, and region, plus a sober estimate of materials cost per student.
 - Write the listing copy to make a curious traveler want to book, and the host message to make a landowner happy to say yes.
+- BE CONCISE. A few short, strong bullets beat long lists. Keep every bullet to one short line and keep all copy tight, so the plan is quick to read.
 
 OUTPUT CONTRACT — this is strict:
 Respond with a SINGLE valid JSON object and NOTHING else. No markdown, no code fences, no commentary before or after. Use exactly these keys:
@@ -35,19 +38,19 @@ Respond with a SINGLE valid JSON object and NOTHING else. No markdown, no code f
   "durationDays": number — total days, appropriate to the format,
   "skillLevel": string — e.g. "All levels", "Beginner", "Intermediate",
   "groupSize": number — a sensible maximum cohort size,
-  "schedule": array of { "day": number, "title": string, "activities": string[] } — one object per day,
-  "studentOutcomes": string[] — concrete skills/takeaways the student leaves with,
-  "landImpact": string[] — the genuine, real improvements to the land/host (a by-product of the learning),
-  "materials": string[] — materials, tools, or inputs used,
-  "whatToBring": string[] — what the student should bring,
+  "schedule": array of { "day": number, "title": string, "activities": string[] }, one object per day, each with exactly 3 short activity bullets,
+  "studentOutcomes": string[], 4 short concrete takeaways the student leaves with,
+  "landImpact": string[], 2 to 3 short real improvements to the land (a by-product of the learning),
+  "materials": string[], 4 to 5 short items, materials or tools used,
+  "whatToBring": string[], 4 to 5 short items the student should bring,
   "whyThisMatch": string, 1 to 2 sentences on why this skill and this site fit together,
   "suggestedPrice": number, the fair price in euros that ONE student pays for the whole residency (realistic for this format, skill, and region),
   "materialsCostPerStudent": number, estimated euros of materials and consumables per student (0 if minimal),
   "pricingRationale": string, one short sentence explaining the price,
-  "listingDescription": string, two short warm paragraphs of student-facing marketing copy that sells the experience (put a blank line, written as \\n\\n, between the two paragraphs),
+  "listingDescription": string, two short warm paragraphs (about 45 to 60 words each) of student-facing marketing copy, with a blank line written as \\n\\n between them,
   "idealStudent": string, one sentence describing who this residency is perfect for,
   "socialBlurb": string, a punchy one or two sentence blurb the teacher could post on social media,
-  "hostPitch": string, a warm, ready-to-send first-person message from the teacher to the host proposing this residency (3 to 5 sentences, covering what you would bring and what the land would gain)
+  "hostPitch": string, a warm, ready-to-send first-person message from the teacher to the host (3 to 4 short sentences, covering what you would bring and what the land would gain)
 }`;
 
 function buildUserPrompt(opts: {
