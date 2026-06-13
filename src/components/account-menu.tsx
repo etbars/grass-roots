@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { LogOut, LayoutGrid, LogIn } from "lucide-react";
+import { LogOut, LayoutGrid, LayoutDashboard, LogIn } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { cn } from "@/lib/utils";
 
@@ -65,6 +65,14 @@ export function AccountMenu({
   if (variant === "mobile") {
     return (
       <div className="flex flex-col gap-2">
+        <Link
+          href="/dashboard"
+          onClick={onNavigate}
+          className="flex items-center gap-2 rounded-full border border-moss/30 px-4 py-2.5 text-sm font-semibold text-moss-deep"
+        >
+          <LayoutDashboard className="h-4 w-4" />
+          Dashboard
+        </Link>
         <Link
           href="/account"
           onClick={onNavigate}
@@ -130,6 +138,14 @@ export function AccountMenu({
                 </div>
               )}
             </div>
+            <Link
+              href="/dashboard"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-bark transition-colors hover:bg-fern/10"
+            >
+              <LayoutDashboard className="h-4 w-4 text-fern" />
+              Dashboard
+            </Link>
             <Link
               href="/account"
               onClick={() => setOpen(false)}

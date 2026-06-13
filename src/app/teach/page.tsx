@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { hosts } from "@/lib/data";
 import { ResidencyDesigner } from "@/components/residency-designer";
 
 export const metadata: Metadata = {
@@ -7,7 +8,13 @@ export const metadata: Metadata = {
     "Design a teacher residency. Bring your skill, pick a host site, and get a complete course matched to the land's real projects.",
 };
 
-export default function TeachPage() {
+export default async function TeachPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ host?: string }>;
+}) {
+  const { host } = await searchParams;
+  const defaultHostId = hosts.some((h) => h.id === host) ? host : undefined;
   return (
     <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8">
       <header className="mx-auto max-w-2xl text-center">
@@ -26,7 +33,7 @@ export default function TeachPage() {
       </header>
 
       <div className="mt-12">
-        <ResidencyDesigner />
+        <ResidencyDesigner defaultHostId={defaultHostId} />
       </div>
     </div>
   );

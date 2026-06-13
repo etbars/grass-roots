@@ -25,6 +25,8 @@ export interface AppUser {
   email: string;
   photoURL: string;
   roles: UserRole[];
+  /** Static host-site ids this user stewards (for the host dashboard). */
+  hostSites: string[];
 }
 
 interface AuthValue {
@@ -35,6 +37,7 @@ interface AuthValue {
   signIn: () => Promise<void>;
   signOutUser: () => Promise<void>;
   setRoles: (roles: UserRole[]) => Promise<void>;
+  setHostSites: (hostSites: string[]) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthValue | null>(null);
@@ -81,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: data.email ?? user.email ?? "",
         photoURL: data.photoURL ?? user.photoURL ?? "",
         roles: (data.roles as UserRole[]) ?? [],
+        hostSites: (data.hostSites as string[]) ?? [],
       });
     });
   }, [user]);
@@ -99,6 +103,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await setDoc(doc(db, "users", user.uid), { roles }, { merge: true });
   }
 
+  async function setHostSites(hostSites: string[]) {
+    if (!db || !user) return;
+    await setDoc(doc(db, "users", user.uid), { hostSites }, { merge: true });
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -109,6 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signOutUser,
         setRoles,
+        setHostSites,
       }}
     >
       {children}
