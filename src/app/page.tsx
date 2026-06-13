@@ -1,13 +1,50 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, GraduationCap, Users, Sprout } from "lucide-react";
+import {
+  ArrowRight,
+  Sparkles,
+  GraduationCap,
+  Users,
+  Sprout,
+  ArrowDown,
+} from "lucide-react";
 import { getAllCourses, categories } from "@/lib/data";
 import { CourseCard } from "@/components/course-card";
 import { CategoryIcon } from "@/components/category-icon";
 
+const TESTIMONIALS = [
+  {
+    quote:
+      "I arrived knowing nothing about natural building and left having helped raise an entire cob guest cabin. I still think about that summer every day.",
+    name: "Mara L.",
+    detail: "Cob Building Residency · Scotland",
+  },
+  {
+    quote:
+      "Three weeks on the farm changed what I want from life. I came to learn permaculture and left with a plan to start my own smallholding.",
+    name: "Daniel R.",
+    detail: "Permaculture Design Certificate · Spain",
+  },
+  {
+    quote:
+      "Mornings in the apiary, evenings around the fire with people who became friends. Best trip I've ever taken — and I can keep bees now.",
+    name: "Priya N.",
+    detail: "Beekeeping Basics · Portugal",
+  },
+];
+
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
 export default function Home() {
   const courses = getAllCourses();
-  const featured = courses.slice(0, 6);
+  const popular = courses.slice(0, 6);
 
   return (
     <>
@@ -22,9 +59,9 @@ export default function Home() {
               Real skills, rooted in real places.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-bark-soft">
-              Grass Roots connects people who want to learn practical skills with
-              teachers who can share them — at regenerative farms, homesteads, and
-              eco-building projects around the world.
+              Travel to regenerative farms, homesteads, and building projects —
+              and learn a craft directly from the people living it. What if your
+              next classroom was a food forest in Portugal?
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -39,17 +76,17 @@ export default function Home() {
                 className="inline-flex items-center gap-2 rounded-full border border-moss/30 px-6 py-3 text-sm font-semibold text-moss-deep transition-colors hover:bg-fern/10"
               >
                 <Sparkles className="h-4 w-4" />
-                Design a residency
+                Host a residency
               </Link>
             </div>
           </div>
 
-          {/* image collage */}
+          {/* human-led image collage */}
           <div className="grid grid-cols-2 gap-3">
             <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
               <Image
-                src="/images/cabin-redhill.jpg"
-                alt="Off-grid cabin on a hillside"
+                src="/images/field-workers.jpg"
+                alt="People planting together on a regenerative farm"
                 fill
                 sizes="(max-width: 1024px) 50vw, 280px"
                 className="object-cover"
@@ -59,8 +96,8 @@ export default function Home() {
             <div className="mt-8 grid gap-3">
               <div className="relative aspect-square overflow-hidden rounded-2xl">
                 <Image
-                  src="/images/bee-flower.jpg"
-                  alt="Bee on a flower"
+                  src="/images/hands-soil.jpg"
+                  alt="Hands holding soil and a seedling"
                   fill
                   sizes="(max-width: 1024px) 50vw, 280px"
                   className="object-cover"
@@ -69,8 +106,8 @@ export default function Home() {
               </div>
               <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
                 <Image
-                  src="/images/farm-work.jpg"
-                  alt="People working a regenerative field"
+                  src="/images/community-table.jpg"
+                  alt="A long communal table shared after a day on the land"
                   fill
                   sizes="(max-width: 1024px) 50vw, 280px"
                   className="object-cover"
@@ -81,12 +118,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- Categories ---------- */}
+      {/* ---------- Explore by craft ---------- */}
       <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="font-display text-3xl font-semibold text-bark">
-            Skills to grow into
-          </h2>
+          <div>
+            <h2 className="font-display text-3xl font-semibold text-bark">
+              Explore by craft
+            </h2>
+            <p className="mt-1 text-bark-soft">
+              Natural building, permaculture, beekeeping, herbalism, and more.
+            </p>
+          </div>
           <Link
             href="/courses"
             className="text-sm font-semibold text-moss hover:text-moss-deep"
@@ -110,75 +152,127 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- Featured courses ---------- */}
+      {/* ---------- Popular residencies ---------- */}
       <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="font-display text-3xl font-semibold text-bark">
-              Upcoming residencies & courses
+              Popular residencies
             </h2>
             <p className="mt-1 text-bark-soft">
-              Immersive, hands-on, and hosted on living land.
+              Pack a bag. These are filling up.
             </p>
           </div>
+          <Link
+            href="/courses"
+            className="text-sm font-semibold text-moss hover:text-moss-deep"
+          >
+            See all →
+          </Link>
         </div>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((course) => (
+          {popular.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}
         </div>
       </section>
 
-      {/* ---------- How it works ---------- */}
+      {/* ---------- How it works (three roots) ---------- */}
       <section id="how-it-works" className="bg-grain">
         <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="font-display text-3xl font-semibold text-bark sm:text-4xl">
-              A marketplace with three roots
+              A regenerative loop
             </h2>
             <p className="mt-3 text-lg text-bark-soft">
-              Everyone gives something, everyone grows.
+              Three sides, each giving something, each growing.
             </p>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {[
               {
-                icon: GraduationCap,
-                role: "Students",
-                text: "Learn permaculture, natural building, beekeeping, herbalism and more by doing — building real skills, a portfolio, and community.",
-              },
-              {
                 icon: Sprout,
                 role: "Teachers",
-                text: "Share your craft, earn income, and often receive accommodation on-site. Bring your skill; we'll help you design the residency.",
+                verb: "share their craft",
+                text: "Bring a practical skill, earn income, and often stay on-site. We'll even help you design the residency.",
+              },
+              {
+                icon: GraduationCap,
+                role: "Students",
+                verb: "learn by doing",
+                text: "Travel to a real place and gain hands-on skills, a portfolio, and a community — by helping a living landscape thrive.",
               },
               {
                 icon: Users,
-                role: "Hosts & landowners",
-                text: "Open your land to courses and residencies. Gain community, momentum on real projects, exposure, and revenue.",
+                role: "Hosts",
+                verb: "open their land",
+                text: "Regenerative farms and projects host courses — gaining momentum, community, exposure, and revenue.",
               },
             ].map((item) => (
               <div
                 key={item.role}
-                className="rounded-2xl border border-stone-soft bg-paper p-7 shadow-soft"
+                className="rounded-2xl border border-stone-soft bg-paper p-7 text-center shadow-soft"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-moss text-paper">
+                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-moss text-paper">
                   <item.icon className="h-6 w-6" />
                 </span>
                 <h3 className="mt-4 font-display text-xl font-semibold text-bark">
                   {item.role}
                 </h3>
+                <p className="mt-2 flex items-center justify-center gap-1 text-sm font-semibold text-clay">
+                  <ArrowDown className="h-3.5 w-3.5" />
+                  {item.verb}
+                </p>
                 <p className="mt-2 text-sm leading-relaxed text-bark-soft">
                   {item.text}
                 </p>
               </div>
             ))}
           </div>
+          <p className="mx-auto mt-8 max-w-xl text-center text-sm italic text-moss-deep">
+            The work students do is real and the land genuinely benefits — but
+            the learning, mentorship, and community always come first.
+          </p>
+        </div>
+      </section>
+
+      {/* ---------- Testimonials ---------- */}
+      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
+        <h2 className="font-display text-3xl font-semibold text-bark sm:text-4xl">
+          Stories from the land
+        </h2>
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          {TESTIMONIALS.map((t) => (
+            <figure
+              key={t.name}
+              className="flex flex-col rounded-2xl border border-stone-soft bg-paper p-7 shadow-soft"
+            >
+              <span className="font-display text-5xl leading-none text-fern/50">
+                &ldquo;
+              </span>
+              <blockquote className="-mt-3 flex-1 text-bark-soft">
+                {t.quote}
+              </blockquote>
+              <figcaption className="mt-5 flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-moss font-display text-sm font-semibold text-paper">
+                  {initials(t.name)}
+                </span>
+                <span>
+                  <span className="block text-sm font-semibold text-bark">
+                    {t.name}
+                  </span>
+                  <span className="block text-xs text-bark-soft">
+                    {t.detail}
+                  </span>
+                </span>
+              </figcaption>
+            </figure>
+          ))}
         </div>
       </section>
 
       {/* ---------- Student to teacher ---------- */}
-      <section className="mx-auto max-w-7xl px-5 pt-6 sm:px-8">
+      <section className="mx-auto max-w-7xl px-5 sm:px-8">
         <Link
           href="/become-a-teacher"
           className="group flex flex-col items-start justify-between gap-4 rounded-3xl border border-stone-soft bg-paper p-7 shadow-soft sm:flex-row sm:items-center"
@@ -234,8 +328,8 @@ export default function Home() {
             </div>
             <div className="relative hidden aspect-[4/3] overflow-hidden rounded-2xl lg:block">
               <Image
-                src="/images/foliage-green.jpg"
-                alt="Lush regenerative planting"
+                src="/images/gathering-goldenhour.jpg"
+                alt="A golden-hour gathering after a day's work"
                 fill
                 sizes="400px"
                 className="object-cover"
