@@ -15,7 +15,7 @@ const footerNav = [
     links: [
       { href: "/become-a-teacher", label: "Become a teacher" },
       { href: "/teach", label: "Teach a course" },
-      { href: "/teach", label: "Host a residency" },
+      { href: "https://www.gohabitat.earth", label: "Host a residency" },
     ],
   },
 ];
@@ -44,16 +44,29 @@ export function SiteFooter() {
               {col.heading}
             </h3>
             <ul className="mt-4 space-y-2.5">
-              {col.links.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-paper/75 transition-colors hover:text-paper"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+              {col.links.map((link) =>
+                link.href.startsWith("http") ? (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-paper/75 transition-colors hover:text-paper"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ) : (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-paper/75 transition-colors hover:text-paper"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ),
+              )}
             </ul>
           </div>
         ))}
