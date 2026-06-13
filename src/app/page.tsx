@@ -49,70 +49,50 @@ export default function Home() {
   return (
     <>
       {/* ---------- Hero ---------- */}
-      <section className="bg-grain">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:py-24">
-          <div>
-            <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-clay">
+      <section className="relative isolate overflow-hidden bg-bark">
+        {/* Background video — a cob house, built start to finish */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <iframe
+            title="A cob house, built start to finish"
+            src="https://www.youtube-nocookie.com/embed/QwyHIoqgTrc?autoplay=1&mute=1&loop=1&playlist=QwyHIoqgTrc&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            aria-hidden="true"
+            tabIndex={-1}
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2"
+          />
+          {/* readability overlay */}
+          <div className="absolute inset-0 bg-bark/55" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bark/85 via-bark/35 to-bark/55" />
+        </div>
+
+        <div className="mx-auto max-w-7xl px-5 py-28 sm:px-8 lg:py-40">
+          <div className="max-w-2xl">
+            <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-wheat">
               Learn by doing · Teach by living
             </p>
-            <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] text-bark sm:text-6xl">
-              Real skills, rooted in real places.
+            <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] text-paper sm:text-6xl">
+              Launch a teaching residency anywhere in the world.
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-bark-soft">
-              Travel to regenerative farms, homesteads, and building projects —
-              and learn a craft directly from the people living it. What if your
-              next classroom was a food forest in Portugal?
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper/85">
+              Bring your craft to a regenerative farm, homestead, or building
+              project — and teach students who learn by doing alongside you.
+              We&apos;ll help you design the whole thing.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/courses"
-                className="inline-flex items-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep"
-              >
-                Explore courses
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
                 href="/teach"
-                className="inline-flex items-center gap-2 rounded-full border border-moss/30 px-6 py-3 text-sm font-semibold text-moss-deep transition-colors hover:bg-fern/10"
+                className="inline-flex items-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep"
               >
                 <Sparkles className="h-4 w-4" />
                 Host a residency
               </Link>
-            </div>
-          </div>
-
-          {/* human-led image collage */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
-              <Image
-                src="/images/field-workers.jpg"
-                alt="People planting together on a regenerative farm"
-                fill
-                sizes="(max-width: 1024px) 50vw, 280px"
-                className="object-cover"
-                priority
-              />
-            </div>
-            <div className="mt-8 grid gap-3">
-              <div className="relative aspect-square overflow-hidden rounded-2xl">
-                <Image
-                  src="/images/hands-soil.jpg"
-                  alt="Hands holding soil and a seedling"
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 280px"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-                <Image
-                  src="/images/community-table.jpg"
-                  alt="A long communal table shared after a day on the land"
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 280px"
-                  className="object-cover"
-                />
-              </div>
+              <Link
+                href="/courses"
+                className="inline-flex items-center gap-2 rounded-full border border-paper/40 px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-paper/10"
+              >
+                Explore courses
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </div>
