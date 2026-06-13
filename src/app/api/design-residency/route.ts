@@ -13,6 +13,7 @@ interface DesignRequest {
   format?: string;
   level?: string;
   audience?: string;
+  details?: string;
 }
 
 const SYSTEM_PROMPT = `You are the residency designer for Grass Roots, a marketplace for hands-on, land-based learning at regenerative farms, homesteads, eco-building sites and permaculture projects.
@@ -63,6 +64,7 @@ function buildUserPrompt(opts: {
   format: string;
   level: string;
   audience: string;
+  notes: string;
 }) {
   return `Design a teacher residency.
 
@@ -75,7 +77,11 @@ ${opts.needs.map((n) => `- ${n}`).join("\n")}
 
 DESIRED FORMAT: ${opts.format}
 STUDENT LEVEL: ${opts.level}
-WHO IT'S FOR: ${opts.audience}
+WHO IT'S FOR: ${opts.audience}${
+    opts.notes
+      ? `\n\nWHAT THE TEACHER WANTS, IN THEIR OWN WORDS (honour this closely, weaving in their requested activities, emphasis, and style):\n${opts.notes}`
+      : ""
+  }
 
 Design a residency that teaches "${opts.skill}" here. The hands-on work should genuinely advance one or more of the site's real projects, while always centring what students learn and take away. Choose an appropriate number of days for the format. The schedule must have one entry per day.`;
 }
@@ -128,6 +134,7 @@ export async function POST(request: Request) {
     format: FORMAT_LABELS[body.format ?? "weekend"] ?? "a weekend workshop",
     level: body.level?.trim() || "all levels welcome",
     audience: body.audience?.trim() || "curious adults who want to learn by doing",
+    notes: body.details?.trim() || "",
   });
 
   const encoder = new TextEncoder();

@@ -81,6 +81,7 @@ export function ResidencyDesigner({
   const [format, setFormat] = useState("weekend");
   const [level, setLevel] = useState("All levels");
   const [audience, setAudience] = useState("");
+  const [details, setDetails] = useState("");
 
   const [status, setStatus] = useState<Status>("idle");
   const [raw, setRaw] = useState("");
@@ -113,7 +114,7 @@ export function ResidencyDesigner({
       const res = await fetch("/api/design-residency", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hostId, skill, format, level, audience }),
+        body: JSON.stringify({ hostId, skill, format, level, audience, details }),
       });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
@@ -373,6 +374,24 @@ export function ResidencyDesigner({
               placeholder="e.g. beginners, families, aspiring smallholders"
               className="mt-1.5 w-full rounded-lg border border-stone-soft bg-cream/40 px-3.5 py-2.5 text-sm text-bark outline-none placeholder:text-stone focus:border-moss focus:ring-2 focus:ring-fern/30"
             />
+          </div>
+
+          {/* Describe your course */}
+          <div>
+            <label className="text-sm font-semibold text-bark">
+              Describe your course{" "}
+              <span className="font-normal text-stone">(optional)</span>
+            </label>
+            <textarea
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              rows={3}
+              placeholder="In your own words: your teaching style, signature activities, anything that makes it yours…"
+              className="mt-1.5 w-full resize-y rounded-lg border border-stone-soft bg-cream/40 px-3.5 py-2.5 text-sm leading-relaxed text-bark outline-none placeholder:text-stone focus:border-moss focus:ring-2 focus:ring-fern/30"
+            />
+            <p className="mt-1 text-xs text-bark-soft">
+              The more you share, the more the residency feels like yours.
+            </p>
           </div>
 
           <button
