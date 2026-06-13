@@ -7,7 +7,6 @@ import {
   Users,
   Sprout,
   ArrowDown,
-  ExternalLink,
 } from "lucide-react";
 import { getAllCourses, categories } from "@/lib/data";
 import { CourseCard } from "@/components/course-card";
@@ -88,15 +87,13 @@ export default function Home() {
                 Explore courses
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <a
-                href="https://www.gohabitat.earth"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/host"
                 className="inline-flex items-center gap-2 rounded-full border border-paper/40 px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-paper/10"
               >
                 Host a residency
-                <ExternalLink className="h-4 w-4" />
-              </a>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </div>

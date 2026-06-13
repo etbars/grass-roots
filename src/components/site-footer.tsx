@@ -14,7 +14,7 @@ const footerNav = [
     links: [
       { href: "/become-a-teacher", label: "Become a teacher" },
       { href: "/teach", label: "Teach a course" },
-      { href: "https://www.gohabitat.earth", label: "Host a residency" },
+      { href: "/host", label: "Host a residency" },
     ],
   },
 ];

@@ -47,14 +47,12 @@ export function SiteHeader() {
           >
             Teach a course
           </Link>
-          <a
-            href="https://www.gohabitat.earth"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/host"
             className="rounded-full bg-moss px-4.5 py-2 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep"
           >
             Host a residency
-          </a>
+          </Link>
         </div>
 
         <button
@@ -93,15 +91,13 @@ export function SiteHeader() {
             >
               Teach a course
             </Link>
-            <a
-              href="https://www.gohabitat.earth"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/host"
               className="rounded-full bg-moss px-4 py-2.5 text-center text-sm font-semibold text-paper"
               onClick={() => setOpen(false)}
             >
               Host a residency
-            </a>
+            </Link>
           </div>
         </nav>
       </div>
