@@ -12,7 +12,7 @@ export const categories: Category[] = [
     id: "natural-building",
     name: "Natural Building",
     blurb: "Cob, straw, timber, and earthen plasters: shelter from the land itself.",
-    image: "/images/tools-craft.jpg",
+    image: "/images/cob-building.jpg",
     icon: "Hammer",
   },
   {
