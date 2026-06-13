@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { MapPin, Sprout, Home, Check, PencilRuler, ExternalLink } from "lucide-react";
 import { hosts, getHostBySlug, getCoursesByHost } from "@/lib/data";
+import { HOST_COORDS } from "@/lib/host-coords";
 import { CourseCard } from "@/components/course-card";
+import { HostMiniMap } from "@/components/host-mini-map";
 
 export function generateStaticParams() {
   return hosts.map((h) => ({ slug: h.slug }));
@@ -30,6 +32,7 @@ export default async function HostProfilePage({
   const host = getHostBySlug(slug);
   if (!host) notFound();
   const courses = getCoursesByHost(host.id);
+  const coords = HOST_COORDS[host.id];
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
@@ -99,6 +102,19 @@ export default async function HostProfilePage({
 
         {/* sidebar */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
+          {coords && (
+            <div className="mb-4 overflow-hidden rounded-2xl border border-stone-soft shadow-soft">
+              <div className="h-44 w-full">
+                <HostMiniMap lng={coords[0]} lat={coords[1]} name={host.name} />
+              </div>
+              <Link
+                href="/map"
+                className="flex items-center justify-center gap-1.5 bg-paper px-4 py-2.5 text-xs font-semibold text-moss transition-colors hover:bg-fern/10"
+              >
+                <MapPin className="h-3.5 w-3.5" /> See it on the living map
+              </Link>
+            </div>
+          )}
           <div className="rounded-2xl border border-stone-soft bg-paper p-6 shadow-soft">
             <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-bark">
               <Home className="h-5 w-5 text-fern" /> What teachers receive
