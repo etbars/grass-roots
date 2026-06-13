@@ -20,9 +20,24 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://grassroots.earth"),
   title: "Grass Roots · Learn by doing. Teach by living.",
   description:
     "A three-sided marketplace for hands-on learning at regenerative farms, homesteads, eco-building sites and permaculture projects. Discover teacher residencies and courses rooted in land, craft, and community.",
+  openGraph: {
+    type: "website",
+    siteName: "Grass Roots",
+    title: "Grass Roots · Learn by doing. Teach by living.",
+    description:
+      "Hands-on courses and teaching residencies at regenerative farms, homesteads, and eco-building sites.",
+    url: "https://grassroots.earth",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Grass Roots · Learn by doing. Teach by living.",
+    description:
+      "Hands-on courses and teaching residencies at regenerative farms, homesteads, and eco-building sites.",
+  },
 };
 
 export default function RootLayout({
