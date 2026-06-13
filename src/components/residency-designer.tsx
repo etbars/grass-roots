@@ -105,50 +105,60 @@ export function ResidencyDesigner({
     setResidency(null);
     setError("");
 
-    try {
+    // One attempt: resolves to the parsed residency, a hard error, or null
+    // (a recoverable parse miss / cut stream we can simply retry).
+    const attempt = async (): Promise<
+      { residency: DesignedResidency } | { error: string } | null
+    > => {
       const res = await fetch("/api/design-residency", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ hostId, skill, format, level, audience }),
       });
-
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Something went wrong designing the residency.");
-        setStatus("error");
-        return;
+        return {
+          error: data.error ?? "Something went wrong designing the residency.",
+        };
       }
-
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let acc = "";
-
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
         acc += decoder.decode(value, { stream: true });
-
         const errIdx = acc.indexOf("__ERROR__");
         if (errIdx !== -1) {
-          setError(acc.slice(errIdx + "__ERROR__".length).trim());
-          setStatus("error");
-          return;
+          return { error: acc.slice(errIdx + "__ERROR__".length).trim() };
         }
         setRaw(acc);
       }
-
       const parsed = tryParse(acc);
-      if (parsed) {
-        setResidency(parsed);
-        setStatus("done");
-      } else {
-        setError("The designer's response couldn't be read. Try again.");
-        setStatus("error");
+      return parsed ? { residency: parsed } : null;
+    };
+
+    // Retry a cut/garbled stream a couple of times before giving up.
+    for (let i = 0; i < 3; i++) {
+      try {
+        const r = await attempt();
+        if (r && "residency" in r) {
+          setResidency(r.residency);
+          setStatus("done");
+          return;
+        }
+        if (r && "error" in r) {
+          setError(r.error);
+          setStatus("error");
+          return;
+        }
+        setRaw("");
+      } catch {
+        // network/stream hiccup; fall through and retry
       }
-    } catch {
-      setError("Network error reaching the designer.");
-      setStatus("error");
     }
+    setError("The designer had trouble finishing. Please try again.");
+    setStatus("error");
   }
 
   async function findMatches() {
