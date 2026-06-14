@@ -60,7 +60,7 @@ export default function AboutPage() {
               About Grass Roots
             </p>
             <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] text-bark sm:text-6xl">
-              A school you can&apos;t buy.
+              Rooted in land, craft, and trust.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-bark-soft">
               Grass Roots teaches land-based crafts the way they are best
