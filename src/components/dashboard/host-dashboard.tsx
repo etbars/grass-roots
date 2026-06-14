@@ -11,6 +11,8 @@ import {
   ArrowRight,
   X,
   Home,
+  Plus,
+  Loader2,
 } from "lucide-react";
 import {
   hosts,
@@ -19,7 +21,14 @@ import {
   getCoursesByHost,
 } from "@/lib/data";
 import { useAuth } from "@/components/auth-provider";
-import { getPublishedListings, type PublishedListing } from "@/lib/db";
+import {
+  getPublishedListings,
+  getHostNeeds,
+  addHostNeed,
+  deleteHostNeed,
+  type PublishedListing,
+  type HostNeed,
+} from "@/lib/db";
 import type { CategoryId, Teacher } from "@/lib/types";
 
 export function HostDashboard() {
@@ -164,20 +173,8 @@ function SitePanel({
       </div>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-3">
-        {/* Projects */}
-        <div>
-          <h4 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-clay">
-            <Sprout className="h-4 w-4" /> Projects needed
-          </h4>
-          <ul className="mt-3 space-y-2">
-            {host.needs.slice(0, 4).map((n) => (
-              <li key={n} className="flex gap-2 text-sm text-bark-soft">
-                <Sprout className="mt-0.5 h-3.5 w-3.5 shrink-0 text-fern" />
-                {n}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Projects (editable) */}
+        <SiteNeedsEditor hostId={hostId} staticNeeds={host.needs} />
 
         {/* Live residencies */}
         <div>
@@ -241,6 +238,110 @@ function SitePanel({
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function SiteNeedsEditor({
+  hostId,
+  staticNeeds,
+}: {
+  hostId: string;
+  staticNeeds: string[];
+}) {
+  const { user } = useAuth();
+  const [posted, setPosted] = useState<HostNeed[]>([]);
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    void getHostNeeds(hostId)
+      .then(setPosted)
+      .catch(() => setPosted([]));
+  }, [hostId]);
+
+  async function add() {
+    const t = text.trim();
+    if (!t || !user || busy) return;
+    setBusy(true);
+    try {
+      const id = await addHostNeed(user.uid, hostId, t);
+      setPosted((p) => [...p, { id, hostId, uid: user.uid, text: t }]);
+      setText("");
+    } catch (e) {
+      console.error("Failed to add need", e);
+    }
+    setBusy(false);
+  }
+
+  async function remove(id: string) {
+    try {
+      await deleteHostNeed(id);
+      setPosted((p) => p.filter((n) => n.id !== id));
+    } catch (e) {
+      console.error("Failed to remove need", e);
+    }
+  }
+
+  return (
+    <div>
+      <h4 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-clay">
+        <Sprout className="h-4 w-4" /> Projects needed
+      </h4>
+      <ul className="mt-3 space-y-2">
+        {staticNeeds.slice(0, 3).map((n) => (
+          <li key={n} className="flex gap-2 text-sm text-bark-soft">
+            <Sprout className="mt-0.5 h-3.5 w-3.5 shrink-0 text-fern" />
+            {n}
+          </li>
+        ))}
+        {posted.map((n) => (
+          <li
+            key={n.id}
+            className="flex items-start gap-2 rounded-lg bg-fern/5 px-2 py-1.5 text-sm text-bark"
+          >
+            <Sprout className="mt-0.5 h-3.5 w-3.5 shrink-0 text-fern" />
+            <span className="flex-1">{n.text}</span>
+            {user && n.uid === user.uid && (
+              <button
+                type="button"
+                onClick={() => void remove(n.id)}
+                aria-label="Remove project"
+                className="shrink-0 text-stone hover:text-clay-deep"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div className="mt-3 flex items-center gap-1.5">
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              void add();
+            }
+          }}
+          placeholder="Post a project your land needs…"
+          className="min-w-0 flex-1 rounded-lg border border-stone-soft bg-cream/40 px-2.5 py-1.5 text-sm text-bark outline-none focus:border-fern focus:bg-paper"
+        />
+        <button
+          type="button"
+          onClick={() => void add()}
+          disabled={busy || !text.trim()}
+          className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-moss px-2.5 py-1.5 text-xs font-semibold text-paper transition-colors hover:bg-moss-deep disabled:opacity-50"
+        >
+          {busy ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Plus className="h-3.5 w-3.5" />
+          )}
+          Add
+        </button>
       </div>
     </div>
   );

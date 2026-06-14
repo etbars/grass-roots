@@ -29,6 +29,15 @@ service cloud.firestore {
                     && request.auth.uid == resource.data.uid;
     }
 
+    // Host-posted project needs: public to read; only the author can write.
+    match /hostNeeds/{id} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.uid;
+      allow update, delete: if request.auth != null
+                    && request.auth.uid == resource.data.uid;
+    }
+
     // Published listings are public to read; only the owner can write.
     match /listings/{id} {
       allow read: if true;

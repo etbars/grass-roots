@@ -205,6 +205,18 @@ export async function getListing(
     : null;
 }
 
+export async function getListingsByHost(
+  hostId: string,
+): Promise<PublishedListing[]> {
+  const snap = await getDocs(
+    query(collection(requireDb(), "listings"), where("hostId", "==", hostId)),
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<PublishedListing, "id">),
+  }));
+}
+
 export async function updateListing(
   id: string,
   patch: Partial<Omit<PublishedListing, "id" | "uid">>,
@@ -228,4 +240,40 @@ export async function uploadListingPhoto(
     contentType: file.type,
   });
   return getDownloadURL(snap.ref);
+}
+
+/** A project a host has posted for one of their sites. */
+export interface HostNeed {
+  id: string;
+  hostId: string;
+  uid: string;
+  text: string;
+}
+
+export async function getHostNeeds(hostId: string): Promise<HostNeed[]> {
+  const snap = await getDocs(
+    query(collection(requireDb(), "hostNeeds"), where("hostId", "==", hostId)),
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<HostNeed, "id">),
+  }));
+}
+
+export async function addHostNeed(
+  uid: string,
+  hostId: string,
+  text: string,
+): Promise<string> {
+  const refDoc = await addDoc(collection(requireDb(), "hostNeeds"), {
+    uid,
+    hostId,
+    text,
+    createdAt: serverTimestamp(),
+  });
+  return refDoc.id;
+}
+
+export async function deleteHostNeed(id: string) {
+  await deleteDoc(doc(requireDb(), "hostNeeds", id));
 }

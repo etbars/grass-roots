@@ -7,6 +7,8 @@ import { hosts, getHostBySlug, getCoursesByHost } from "@/lib/data";
 import { HOST_COORDS } from "@/lib/host-coords";
 import { CourseCard } from "@/components/course-card";
 import { HostMiniMap } from "@/components/host-mini-map";
+import { HostListings } from "@/components/host-listings";
+import { HostPostedNeeds } from "@/components/host-posted-needs";
 
 export function generateStaticParams() {
   return hosts.map((h) => ({ slug: h.slug }));
@@ -83,6 +85,7 @@ export default async function HostProfilePage({
                   {need}
                 </li>
               ))}
+              <HostPostedNeeds hostId={host.id} />
             </ul>
           </section>
 
@@ -98,6 +101,8 @@ export default async function HostProfilePage({
               </div>
             </section>
           )}
+
+          <HostListings hostId={host.id} />
         </div>
 
         {/* sidebar */}
