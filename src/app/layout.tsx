@@ -7,6 +7,9 @@ import { AuthProvider } from "@/components/auth-provider";
 import { RoleOnboarding } from "@/components/role-onboarding";
 import { FoundingBanner } from "@/components/founding-banner";
 import { DemoBanner } from "@/components/demo-banner";
+import { GoogleAnalytics } from "@/components/google-analytics";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -53,6 +56,7 @@ export default function RootLayout({
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-bark">
+        {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
         <AuthProvider>
           <FoundingBanner />
           <DemoBanner />
