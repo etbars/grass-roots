@@ -75,8 +75,8 @@ export function SiteFooter() {
         <p className="mx-auto max-w-3xl px-5 py-3 text-center text-xs leading-relaxed text-paper/45 sm:px-8">
           Demonstration project. Teachers, courses, and host sites shown are
           illustrative and fictional; photographs are from Unsplash and the
-          people pictured are not affiliated with Grass Roots. Host sites are
-          adapted from GoHabitat listings.
+          people pictured are not affiliated with Grass Roots. Several host
+          sites are adapted from GoHabitat listings.
         </p>
       </div>
 
