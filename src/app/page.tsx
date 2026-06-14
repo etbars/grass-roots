@@ -58,7 +58,7 @@ export default function Home() {
             allow="autoplay; encrypted-media; picture-in-picture"
             aria-hidden="true"
             tabIndex={-1}
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2"
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2 scale-150"
           />
           {/* readability overlay */}
           <div className="absolute inset-0 bg-bark/55" />
