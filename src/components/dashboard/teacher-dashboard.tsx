@@ -8,6 +8,7 @@ import {
   Loader2,
   Compass,
   PencilRuler,
+  Pencil,
   Globe,
   Bookmark,
 } from "lucide-react";
@@ -189,12 +190,11 @@ export function TeacherDashboard({
               <Empty body="Publish a residency to open it to students." />
             ) : (
               listings.map((l) => (
-                <Link
+                <div
                   key={l.id}
-                  href={`/listings/${l.id}`}
-                  className="group flex items-center justify-between gap-3 rounded-2xl border border-stone-soft bg-paper p-4 shadow-soft transition-colors hover:border-fern"
+                  className="rounded-2xl border border-stone-soft bg-paper p-4 shadow-soft"
                 >
-                  <span>
+                  <Link href={`/listings/${l.id}`} className="group block">
                     <CategoryIcon
                       id={l.categoryId}
                       className="mb-1 h-4 w-4 text-fern"
@@ -205,9 +205,22 @@ export function TeacherDashboard({
                     <span className="block text-sm text-bark-soft">
                       {l.hostName} · {formatPrice(l.price)}
                     </span>
-                  </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-fern" />
-                </Link>
+                  </Link>
+                  <div className="mt-2 flex items-center gap-4 text-sm font-semibold">
+                    <Link
+                      href={`/listings/${l.id}`}
+                      className="inline-flex items-center gap-1 text-moss hover:text-moss-deep"
+                    >
+                      View <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                    <Link
+                      href={`/listings/${l.id}/edit`}
+                      className="inline-flex items-center gap-1 text-bark-soft hover:text-moss"
+                    >
+                      <Pencil className="h-3.5 w-3.5" /> Edit
+                    </Link>
+                  </div>
+                </div>
               ))
             )}
           </div>

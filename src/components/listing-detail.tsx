@@ -14,13 +14,16 @@ import {
   Loader2,
   ArrowLeft,
   Globe,
+  Pencil,
 } from "lucide-react";
 import { categories, formatPrice } from "@/lib/data";
 import { CategoryIcon } from "@/components/category-icon";
 import { ApplyButton } from "@/components/apply-button";
+import { useAuth } from "@/components/auth-provider";
 import { getListing, type PublishedListing } from "@/lib/db";
 
 export function ListingDetail({ id }: { id: string }) {
+  const { user } = useAuth();
   const [listing, setListing] = useState<PublishedListing | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "missing">(
     "loading",
@@ -67,12 +70,22 @@ export function ListingDetail({ id }: { id: string }) {
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-      <Link
-        href="/courses"
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-bark-soft hover:text-moss"
-      >
-        <ArrowLeft className="h-4 w-4" /> Courses
-      </Link>
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          href="/courses"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-bark-soft hover:text-moss"
+        >
+          <ArrowLeft className="h-4 w-4" /> Courses
+        </Link>
+        {user?.uid === listing.uid && (
+          <Link
+            href={`/listings/${listing.id}/edit`}
+            className="inline-flex items-center gap-1.5 rounded-full border border-moss/30 px-4 py-1.5 text-sm font-semibold text-moss-deep transition-colors hover:bg-fern/10"
+          >
+            <Pencil className="h-3.5 w-3.5" /> Edit listing
+          </Link>
+        )}
+      </div>
 
       <div className="relative mt-4 aspect-[21/9] overflow-hidden rounded-3xl">
         <Image

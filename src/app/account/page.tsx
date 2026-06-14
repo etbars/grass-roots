@@ -10,6 +10,7 @@ import {
   LogIn,
   ArrowRight,
   Check,
+  Pencil,
 } from "lucide-react";
 import {
   useAuth,
@@ -142,25 +143,37 @@ export default function AccountPage() {
           </h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {listings.map((l) => (
-              <Link
+              <div
                 key={l.id}
-                href={`/listings/${l.id}`}
-                className="group rounded-2xl border border-stone-soft bg-paper p-5 shadow-soft transition-colors hover:border-fern"
+                className="rounded-2xl border border-stone-soft bg-paper p-5 shadow-soft"
               >
                 <span className="inline-flex items-center gap-1 rounded-full bg-fern/12 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-moss">
                   Live
                 </span>
-                <p className="mt-2 font-display text-lg font-semibold leading-snug text-bark group-hover:text-moss">
-                  {l.title}
-                </p>
-                <p className="mt-1 text-sm text-bark-soft">
-                  {l.hostName} · {formatPrice(l.price)}
-                </p>
-                <p className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-moss">
-                  View listing
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                </p>
-              </Link>
+                <Link href={`/listings/${l.id}`} className="group block">
+                  <p className="mt-2 font-display text-lg font-semibold leading-snug text-bark group-hover:text-moss">
+                    {l.title}
+                  </p>
+                  <p className="mt-1 text-sm text-bark-soft">
+                    {l.hostName} · {formatPrice(l.price)}
+                  </p>
+                </Link>
+                <div className="mt-3 flex items-center gap-4 text-sm font-semibold">
+                  <Link
+                    href={`/listings/${l.id}`}
+                    className="inline-flex items-center gap-1 text-moss hover:text-moss-deep"
+                  >
+                    View
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                  <Link
+                    href={`/listings/${l.id}/edit`}
+                    className="inline-flex items-center gap-1 text-bark-soft hover:text-moss"
+                  >
+                    <Pencil className="h-3.5 w-3.5" /> Edit
+                  </Link>
+                </div>
+              </div>
             ))}
           </div>
         </section>

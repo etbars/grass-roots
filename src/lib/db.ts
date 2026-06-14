@@ -3,15 +3,22 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import type { DesignedResidency } from "@/lib/residency-schema";
 import type { CategoryId } from "@/lib/types";
 
@@ -182,4 +189,29 @@ export async function getListing(
   return snap.exists()
     ? { id: snap.id, ...(snap.data() as Omit<PublishedListing, "id">) }
     : null;
+}
+
+export async function updateListing(
+  id: string,
+  patch: Partial<Omit<PublishedListing, "id" | "uid">>,
+) {
+  await updateDoc(doc(requireDb(), "listings", id), patch);
+}
+
+export async function deleteListing(id: string) {
+  await deleteDoc(doc(requireDb(), "listings", id));
+}
+
+/** Upload a listing photo to the owner's Storage folder, return its URL. */
+export async function uploadListingPhoto(
+  uid: string,
+  file: File,
+): Promise<string> {
+  if (!storage) throw new Error("Storage is not configured.");
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `listings/${uid}/${Date.now()}-${safe}`;
+  const snap = await uploadBytes(ref(storage, path), file, {
+    contentType: file.type,
+  });
+  return getDownloadURL(snap.ref);
 }
