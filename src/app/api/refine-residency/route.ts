@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { aiGuard } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -36,12 +37,18 @@ Respond with a SINGLE valid JSON object and NOTHING else (no markdown, no commen
 }`;
 
 export async function POST(request: Request) {
-  let body: { residency?: unknown; instruction?: string; hostName?: string };
-  try {
-    body = (await request.json()) as typeof body;
-  } catch {
-    return Response.json({ error: "Invalid request body." }, { status: 400 });
-  }
+  const guard = await aiGuard(request, {
+    name: "refine",
+    limit: 15,
+    windowMs: 60_000,
+    maxBytes: 24_000,
+  });
+  if ("error" in guard) return guard.error;
+  const body = guard.body as {
+    residency?: unknown;
+    instruction?: string;
+    hostName?: string;
+  };
   if (!body.residency || !body.instruction?.trim()) {
     return Response.json(
       { error: "Need a residency and a requested change." },

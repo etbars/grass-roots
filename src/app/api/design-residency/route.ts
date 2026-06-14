@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { getHost } from "@/lib/data";
+import { aiGuard } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 // This route streams a model response — never cache it.
@@ -94,12 +95,14 @@ const FORMAT_LABELS: Record<string, string> = {
 };
 
 export async function POST(request: Request) {
-  let body: DesignRequest;
-  try {
-    body = (await request.json()) as DesignRequest;
-  } catch {
-    return Response.json({ error: "Invalid request body." }, { status: 400 });
-  }
+  const guard = await aiGuard(request, {
+    name: "design",
+    limit: 10,
+    windowMs: 60_000,
+    maxBytes: 8_000,
+  });
+  if ("error" in guard) return guard.error;
+  const body = guard.body as DesignRequest;
 
   const host = getHost(body.hostId);
   if (!host) {

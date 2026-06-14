@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { hosts } from "@/lib/data";
+import { aiGuard } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,13 +12,14 @@ interface HostMatch {
 }
 
 export async function POST(request: Request) {
-  let skill = "";
-  try {
-    const body = (await request.json()) as { skill?: string };
-    skill = body.skill ?? "";
-  } catch {
-    return Response.json({ error: "Invalid request body." }, { status: 400 });
-  }
+  const guard = await aiGuard(request, {
+    name: "match",
+    limit: 20,
+    windowMs: 60_000,
+    maxBytes: 2_000,
+  });
+  if ("error" in guard) return guard.error;
+  const skill = (guard.body as { skill?: string }).skill ?? "";
   if (!skill?.trim()) {
     return Response.json({ error: "Tell us what you teach first." }, { status: 400 });
   }
