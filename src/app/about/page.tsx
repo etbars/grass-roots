@@ -60,19 +60,18 @@ export default function AboutPage() {
               About Grass Roots
             </p>
             <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] text-bark sm:text-6xl">
-              Education that puts down roots.
+              A school you can&apos;t buy.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-bark-soft">
-              Grass Roots connects people who want to learn a craft with the
-              teachers who practise it and the land that needs it. Real skills,
-              real places, real work that leaves the soil better than it found
-              it.
+              Grass Roots teaches land-based crafts the way they are best
+              learned: by doing them, on real ground, beside the people who live
+              the work. Permaculture, natural building, beekeeping, herbalism,
+              and more.
             </p>
             <p className="mt-4 max-w-xl leading-relaxed text-bark-soft">
-              We think who owns a company shapes what it becomes. So we are
-              building Grass Roots to be owned the same way we believe land
-              should be held: in stewardship, for the long term, in service of
-              its purpose.
+              And we are building the company itself to be stewarded, not owned
+              for sale. Held in trust, governed by people close to the mission,
+              with profit flowing back to teachers, hosts, and the soil.
             </p>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
