@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const footerNav = [
   {
@@ -35,6 +36,13 @@ export function SiteFooter() {
             doing, teach by living, and grow regenerative projects around the
             world.
           </p>
+          <Link
+            href="/about"
+            className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-wheat transition-colors hover:text-paper"
+          >
+            About Grass Roots
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
         {footerNav.map((col) => (

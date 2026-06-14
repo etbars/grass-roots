@@ -11,7 +11,7 @@ const navLinks = [
   { href: "/hosts", label: "Host sites" },
   { href: "/map", label: "Map" },
   { href: "/become-a-teacher", label: "Become a teacher" },
-  { href: "/#how-it-works", label: "How it works" },
+  { href: "/about", label: "About" },
 ];
 
 export function SiteHeader() {
