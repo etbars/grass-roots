@@ -208,7 +208,7 @@ export default function AboutPage() {
               GoHabitat
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
-            , which connects people to regenerative places to live and work.
+            , which connects people to regenerative place to live and work.
             Many of the host sites you see here are drawn from that world. Where
             GoHabitat helps people find a place, Grass Roots helps them learn the
             skills to care for it.
