@@ -192,6 +192,10 @@ function RequestModal({
                 }}
                 className="mt-4 space-y-4"
               >
+                <p className="rounded-lg border border-clay/30 bg-clay/5 px-3 py-2 text-xs leading-relaxed text-clay-deep">
+                  Grass Roots is a demonstration. This records your interest,
+                  nothing is booked or charged.
+                </p>
                 <p className="text-sm leading-relaxed text-bark-soft">
                   Tell the teacher a little about you and we&apos;ll pass along
                   your interest in{" "}

@@ -209,7 +209,8 @@ export function ListingDetail({ id }: { id: string }) {
               />
             </div>
             <p className="mt-3 text-center text-xs text-bark-soft">
-              No payment today. The teacher confirms your place first.
+              Demonstration only. Reserving records your interest, nothing is
+              booked or charged.
             </p>
           </div>
         </aside>
