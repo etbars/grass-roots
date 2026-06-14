@@ -12,7 +12,7 @@ export const courses: Course[] = [
     listingType: "course",
     teacherId: "tomas",
     hostId: "fairytale-cob",
-    image: "/images/cob-building.jpg",
+    image: "/images/cob-building-residency.jpg",
     durationLabel: "14 days",
     startDate: "2026-07-13",
     capacity: 8,
