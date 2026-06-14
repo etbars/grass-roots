@@ -60,6 +60,43 @@ export async function submitCourseRequest(data: {
   });
 }
 
+/**
+ * Founding-member intent: a pre-launch reservation of credit at a bonus tier.
+ * No payment is taken; this records willingness so we can invite them to claim
+ * when credit goes live. If signed in, the chosen tier is also stamped on the
+ * user's own profile so /account can show their founding status.
+ */
+export async function reserveFoundingCredit(data: {
+  email: string;
+  tier: string;
+  pay: number;
+  credit: number;
+  uid: string | null;
+}) {
+  await addDoc(collection(requireDb(), "foundingReservations"), {
+    ...data,
+    createdAt: serverTimestamp(),
+  });
+  if (data.uid) {
+    await setDoc(
+      doc(requireDb(), "users", data.uid),
+      { foundingTier: data.tier, foundingCredit: data.credit },
+      { merge: true },
+    );
+  }
+}
+
+export async function joinWaitlist(data: {
+  email: string;
+  uid: string | null;
+  source: string;
+}) {
+  await addDoc(collection(requireDb(), "waitlist"), {
+    ...data,
+    createdAt: serverTimestamp(),
+  });
+}
+
 export interface SavedResidency {
   id: string;
   uid: string;

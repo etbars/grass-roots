@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AuthProvider } from "@/components/auth-provider";
 import { RoleOnboarding } from "@/components/role-onboarding";
+import { FoundingBanner } from "@/components/founding-banner";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -52,6 +53,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-cream text-bark">
         <AuthProvider>
+          <FoundingBanner />
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter />

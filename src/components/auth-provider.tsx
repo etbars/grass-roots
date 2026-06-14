@@ -27,6 +27,9 @@ export interface AppUser {
   roles: UserRole[];
   /** Static host-site ids this user stewards (for the host dashboard). */
   hostSites: string[];
+  /** Founding-member reservation (pre-launch credit intent), if any. */
+  foundingTier?: string;
+  foundingCredit?: number;
 }
 
 interface AuthValue {
@@ -85,6 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         photoURL: data.photoURL ?? user.photoURL ?? "",
         roles: (data.roles as UserRole[]) ?? [],
         hostSites: (data.hostSites as string[]) ?? [],
+        foundingTier: data.foundingTier as string | undefined,
+        foundingCredit: data.foundingCredit as number | undefined,
       });
     });
   }, [user]);

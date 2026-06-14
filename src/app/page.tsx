@@ -9,8 +9,10 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { getAllCourses, categories } from "@/lib/data";
+import { FOUNDING_LIVE } from "@/lib/founding";
 import { CourseCard } from "@/components/course-card";
 import { CategoryIcon } from "@/components/category-icon";
+import { FoundingBand } from "@/components/founding-band";
 
 const TESTIMONIALS = [
   {
@@ -157,6 +159,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ---------- Founding members ---------- */}
+      {FOUNDING_LIVE && <FoundingBand />}
 
       {/* ---------- How it works (three roots) ---------- */}
       <section id="how-it-works" className="bg-grain">

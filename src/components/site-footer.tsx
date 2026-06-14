@@ -16,6 +16,7 @@ const footerNav = [
       { href: "/become-a-teacher", label: "Become a teacher" },
       { href: "/teach", label: "Teach a course" },
       { href: "/host", label: "Host a residency" },
+      { href: "/founding", label: "Founding members" },
     ],
   },
 ];

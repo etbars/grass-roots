@@ -21,6 +21,17 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    // Founding-member reservations and the waitlist: anyone may submit;
+    // not readable from the client (reviewed via admin tooling).
+    match /foundingReservations/{id} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+    match /waitlist/{id} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
     // Designed residencies are private to the user who saved them.
     match /residencies/{id} {
       allow create: if request.auth != null

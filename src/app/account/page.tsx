@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Check,
   Pencil,
+  Sprout,
 } from "lucide-react";
 import {
   useAuth,
@@ -26,6 +27,7 @@ import {
 } from "@/lib/db";
 import { PublishResidencyButton } from "@/components/publish-residency-button";
 import { formatPrice } from "@/lib/data";
+import { getFoundingTier } from "@/lib/founding";
 import { cn } from "@/lib/utils";
 
 const ALL_ROLES: UserRole[] = ["student", "teacher", "host"];
@@ -133,6 +135,23 @@ export default function AccountPage() {
           })}
         </div>
       </section>
+
+      {/* Founding status */}
+      {profile?.foundingTier && getFoundingTier(profile.foundingTier) && (
+        <section className="mt-8 rounded-2xl border border-fern/30 bg-fern/5 p-6 shadow-soft">
+          <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-bark">
+            <Sprout className="h-5 w-5 text-fern" /> Founding member
+          </h2>
+          <p className="mt-1.5 text-sm leading-relaxed text-bark-soft">
+            You reserved the{" "}
+            <span className="font-semibold text-bark">
+              {getFoundingTier(profile.foundingTier)!.name}
+            </span>{" "}
+            tier: €{profile.foundingCredit} of credit locked in. We&apos;ll
+            email you to claim it when founding credit goes live. No payment yet.
+          </p>
+        </section>
+      )}
 
       {/* Live listings */}
       {listings && listings.length > 0 && (
