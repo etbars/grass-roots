@@ -5,7 +5,7 @@ import { ResidencyDesigner } from "@/components/residency-designer";
 export const metadata: Metadata = {
   title: "Teach a course · Grass Roots",
   description:
-    "Design a teacher residency. Bring your skill, pick a host site, and get a complete course matched to the land's real projects.",
+    "Design a teacher residency. Bring your skill, choose any landscape or get matched to a host site, and get a complete course built around real work on the land.",
 };
 
 export default async function TeachPage({

@@ -14,6 +14,7 @@ import {
   CalendarDays,
   Check,
   Compass,
+  Sprout,
   Wallet,
   TrendingUp,
   Copy,
@@ -79,7 +80,10 @@ export function ResidencyDesigner({
 }: {
   defaultHostId?: string;
 }) {
-  const [hostId, setHostId] = useState(defaultHostId ?? hosts[0].id);
+  const [mode, setMode] = useState<"any" | "match">(
+    defaultHostId ? "match" : "any",
+  );
+  const [hostId, setHostId] = useState(defaultHostId ?? "");
   const [skill, setSkill] = useState("");
   const [format, setFormat] = useState("weekend");
   const [level, setLevel] = useState("All levels");
@@ -99,11 +103,25 @@ export function ResidencyDesigner({
   >([]);
   const [refining, setRefining] = useState(false);
 
-  const host = hosts.find((h) => h.id === hostId)!;
+  // No specific host ("any landscape") designs a portable residency.
+  const selectedHost = hosts.find((h) => h.id === hostId);
+  const generic = !selectedHost;
+  const hostLabel = selectedHost?.name ?? "any landscape";
+  const needsSite = mode === "match" && !selectedHost;
+
+  function chooseAny() {
+    setMode("any");
+    setHostId("");
+  }
+
+  function chooseMatch() {
+    setMode("match");
+    if (skill.trim() && matchStatus === "idle") void findMatches();
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!skill.trim() || status === "designing") return;
+    if (!skill.trim() || status === "designing" || needsSite) return;
 
     setStatus("designing");
     setRaw("");
@@ -199,7 +217,7 @@ export function ResidencyDesigner({
         body: JSON.stringify({
           residency: current,
           instruction,
-          hostName: host.name,
+          hostName: selectedHost?.name ?? "any willing host",
         }),
       });
       if (!res.ok || !res.body) return null;
@@ -250,8 +268,9 @@ export function ResidencyDesigner({
           Design a residency
         </h2>
         <p className="mt-1.5 text-sm leading-relaxed text-bark-soft">
-          Tell us your skill and pick a host site. We&apos;ll design a complete
-          teacher residency, matched to the land&apos;s real projects.
+          Tell us your skill and how you&apos;d like to place it. We&apos;ll
+          design a complete teacher residency, built around real work on the
+          land.
         </p>
 
         <div className="mt-6 space-y-5">
@@ -280,98 +299,126 @@ export function ResidencyDesigner({
             </div>
           </div>
 
-          {/* Smart matching */}
+          {/* Where will you teach? */}
           <div>
-            <button
-              type="button"
-              onClick={findMatches}
-              disabled={!skill.trim() || matchStatus === "matching"}
-              className="flex items-center gap-1.5 text-sm font-semibold text-moss transition-colors hover:text-moss-deep disabled:opacity-50"
-            >
-              {matchStatus === "matching" ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Finding your best-matched sites…
-                </>
-              ) : (
-                <>
-                  <Compass className="h-4 w-4" />
-                  Not sure where? Find your best-matched sites
-                </>
-              )}
-            </button>
+            <label className="text-sm font-semibold text-bark">
+              Where will you teach?
+            </label>
+            <div className="mt-1.5 grid gap-2">
+              <ModeCard
+                active={mode === "any"}
+                onClick={chooseAny}
+                icon={<Sprout className="h-4 w-4" />}
+                title="Any landscape willing to host"
+                desc="Design a portable residency any regenerative host could take on."
+              />
+              <ModeCard
+                active={mode === "match"}
+                onClick={chooseMatch}
+                icon={<Compass className="h-4 w-4" />}
+                title="Assistance wanted in matching"
+                desc="We'll suggest host sites whose land fits your craft."
+              />
+            </div>
 
-            {matchStatus === "error" && (
-              <p className="mt-2 text-xs text-clay">
-                Couldn&apos;t find matches just now. Pick a site below.
-              </p>
+            {mode === "match" && (
+              <div className="mt-3 space-y-3">
+                {selectedHost && (
+                  <div className="flex items-center justify-between gap-2 rounded-xl border border-moss bg-fern/10 p-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-bark">
+                        {selectedHost.name}
+                      </p>
+                      <p className="text-xs text-bark-soft">
+                        {selectedHost.location.place},{" "}
+                        {selectedHost.location.country}
+                      </p>
+                    </div>
+                    <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-moss">
+                      <Check className="h-3 w-3" /> Selected
+                    </span>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={findMatches}
+                  disabled={!skill.trim() || matchStatus === "matching"}
+                  className="flex items-center gap-1.5 text-sm font-semibold text-moss transition-colors hover:text-moss-deep disabled:opacity-50"
+                >
+                  {matchStatus === "matching" ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Finding your best-matched sites…
+                    </>
+                  ) : (
+                    <>
+                      <Compass className="h-4 w-4" />
+                      {matches.length
+                        ? "Find other matches"
+                        : "Find your best-matched sites"}
+                    </>
+                  )}
+                </button>
+
+                {!skill.trim() && (
+                  <p className="text-xs text-bark-soft">
+                    Add your skill above and we&apos;ll find sites that fit.
+                  </p>
+                )}
+
+                {matchStatus === "error" && (
+                  <p className="text-xs text-clay">
+                    Couldn&apos;t find matches just now. Try again.
+                  </p>
+                )}
+
+                {matchStatus === "done" && matches.length > 0 && (
+                  <ul className="space-y-2">
+                    {matches.map((m, i) => {
+                      const mh = hosts.find((h) => h.id === m.hostId);
+                      if (!mh) return null;
+                      const active = hostId === m.hostId;
+                      return (
+                        <li key={m.hostId}>
+                          <button
+                            type="button"
+                            onClick={() => setHostId(m.hostId)}
+                            className={cn(
+                              "w-full rounded-xl border p-3 text-left transition-colors",
+                              active
+                                ? "border-moss bg-fern/10"
+                                : "border-stone-soft bg-cream/40 hover:border-fern",
+                            )}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-sm font-semibold text-bark">
+                                {mh.name}
+                              </span>
+                              <span className="flex items-center gap-1 text-xs font-semibold text-moss">
+                                {i === 0 && <TrendingUp className="h-3 w-3" />}
+                                {m.fitScore}% fit
+                              </span>
+                            </div>
+                            <p className="mt-0.5 text-xs text-bark-soft">
+                              {mh.location.place}, {mh.location.country}
+                            </p>
+                            <p className="mt-1 text-xs leading-relaxed text-bark-soft">
+                              {m.reason}
+                            </p>
+                            {active && (
+                              <span className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-moss">
+                                <Check className="h-3 w-3" /> Selected
+                              </span>
+                            )}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
             )}
-
-            {matchStatus === "done" && matches.length > 0 && (
-              <ul className="mt-3 space-y-2">
-                {matches.map((m, i) => {
-                  const mh = hosts.find((h) => h.id === m.hostId);
-                  if (!mh) return null;
-                  const active = hostId === m.hostId;
-                  return (
-                    <li key={m.hostId}>
-                      <button
-                        type="button"
-                        onClick={() => setHostId(m.hostId)}
-                        className={cn(
-                          "w-full rounded-xl border p-3 text-left transition-colors",
-                          active
-                            ? "border-moss bg-fern/10"
-                            : "border-stone-soft bg-cream/40 hover:border-fern",
-                        )}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-sm font-semibold text-bark">
-                            {mh.name}
-                          </span>
-                          <span className="flex items-center gap-1 text-xs font-semibold text-moss">
-                            {i === 0 && <TrendingUp className="h-3 w-3" />}
-                            {m.fitScore}% fit
-                          </span>
-                        </div>
-                        <p className="mt-0.5 text-xs text-bark-soft">
-                          {mh.location.place}, {mh.location.country}
-                        </p>
-                        <p className="mt-1 text-xs leading-relaxed text-bark-soft">
-                          {m.reason}
-                        </p>
-                        {active && (
-                          <span className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-moss">
-                            <Check className="h-3 w-3" /> Selected
-                          </span>
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-
-          {/* Host */}
-          <div>
-            <label className="text-sm font-semibold text-bark">Host site</label>
-            <select
-              value={hostId}
-              onChange={(e) => setHostId(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-stone-soft bg-cream/40 px-3.5 py-2.5 text-sm text-bark outline-none focus:border-moss focus:ring-2 focus:ring-fern/30"
-            >
-              {hosts.map((h) => (
-                <option key={h.id} value={h.id}>
-                  {h.name} · {h.location.place}, {h.location.country}
-                </option>
-              ))}
-            </select>
-            <p className="mt-2 rounded-lg bg-fern/10 px-3 py-2 text-xs leading-relaxed text-moss-deep">
-              <span className="font-semibold">This land needs:</span>{" "}
-              {host.needs[0].toLowerCase()}
-              {host.needs.length > 1 ? `, and more.` : "."}
-            </p>
           </div>
 
           {/* Format + Level */}
@@ -440,7 +487,7 @@ export function ResidencyDesigner({
 
           <button
             type="submit"
-            disabled={!skill.trim() || status === "designing"}
+            disabled={!skill.trim() || status === "designing" || needsSite}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-moss px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep disabled:cursor-not-allowed disabled:opacity-60"
           >
             {status === "designing" ? (
@@ -455,6 +502,12 @@ export function ResidencyDesigner({
               </>
             )}
           </button>
+          {needsSite && (
+            <p className="mt-2 text-center text-xs text-bark-soft">
+              Pick a matched site above, or choose &ldquo;any landscape&rdquo; to
+              design a portable one.
+            </p>
+          )}
         </div>
       </form>
 
@@ -473,7 +526,7 @@ export function ResidencyDesigner({
 
         {livePreview && (
           <DesignerLiveState
-            hostName={host.name}
+            hostName={selectedHost?.name ?? null}
             title={titlePreview}
             hook={hookPreview}
             daysPlanned={daysPlanned}
@@ -483,8 +536,9 @@ export function ResidencyDesigner({
         {residency && status === "done" && (
           <ResidencyResult
             residency={residency}
-            hostId={host.id}
-            hostName={host.name}
+            hostId={hostId}
+            hostName={hostLabel}
+            generic={generic}
             onChange={setResidency}
             onRefine={refine}
             refining={refining}
@@ -492,6 +546,52 @@ export function ResidencyDesigner({
         )}
       </div>
     </div>
+  );
+}
+
+function ModeCard({
+  active,
+  onClick,
+  icon,
+  title,
+  desc,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cn(
+        "flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors",
+        active
+          ? "border-moss bg-fern/10"
+          : "border-stone-soft bg-cream/40 hover:border-fern",
+      )}
+    >
+      <span
+        className={cn(
+          "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
+          active ? "bg-moss text-paper" : "bg-fern/15 text-moss",
+        )}
+      >
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <span className="flex items-center gap-1.5 text-sm font-semibold text-bark">
+          {title}
+          {active && <Check className="h-3.5 w-3.5 text-moss" />}
+        </span>
+        <span className="mt-0.5 block text-xs leading-relaxed text-bark-soft">
+          {desc}
+        </span>
+      </span>
+    </button>
   );
 }
 
@@ -505,8 +605,9 @@ function DesignerEmptyState() {
         Your residency appears here
       </h3>
       <p className="mt-2 max-w-sm text-sm leading-relaxed text-bark-soft">
-        Pick a skill and a host site, then watch a complete residency take shape,
-        with a schedule, outcomes, and real impact on the land.
+        Pick a skill and how you&apos;d like to place it, then watch a complete
+        residency take shape, with a schedule, outcomes, and real impact on the
+        land.
       </p>
     </div>
   );
@@ -518,7 +619,7 @@ function DesignerLiveState({
   hook,
   daysPlanned,
 }: {
-  hostName: string;
+  hostName: string | null;
   title: string | null;
   hook: string | null;
   daysPlanned: number;
@@ -528,7 +629,7 @@ function DesignerLiveState({
       <div className="flex items-center gap-2 text-fern">
         <Loader2 className="h-4 w-4 animate-spin" />
         <span className="text-sm font-semibold">
-          Reading the land at {hostName}…
+          {hostName ? `Reading the land at ${hostName}…` : "Reading the land…"}
         </span>
       </div>
 
@@ -578,6 +679,7 @@ function ResidencyResult({
   residency,
   hostId,
   hostName,
+  generic,
   onChange,
   onRefine,
   refining,
@@ -585,6 +687,7 @@ function ResidencyResult({
   residency: DesignedResidency;
   hostId: string;
   hostName: string;
+  generic?: boolean;
   onChange: (next: DesignedResidency) => void;
   onRefine: (instruction: string) => void;
   refining: boolean;
@@ -625,6 +728,7 @@ function ResidencyResult({
             residency={residency}
             hostId={hostId}
             hostName={hostName}
+            generic={generic}
             variant="solid"
           />
         </div>
@@ -830,7 +934,7 @@ function ResidencyResult({
 
       {/* Host pitch */}
       <Section
-        title={`Message to ${hostName}`}
+        title={generic ? "Message to a prospective host" : `Message to ${hostName}`}
         icon={<Send className="h-4 w-4" />}
       >
         <div className="mt-2 rounded-xl border border-stone-soft bg-cream/40 p-4">

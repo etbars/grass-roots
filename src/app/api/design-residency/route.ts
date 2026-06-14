@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 26;
 
 interface DesignRequest {
-  hostId: string;
+  hostId?: string;
   skill: string;
   format?: string;
   level?: string;
@@ -87,6 +87,31 @@ WHO IT'S FOR: ${opts.audience}${
 Design a residency that teaches "${opts.skill}" here. The hands-on work should genuinely advance one or more of the site's real projects, while always centring what students learn and take away. Choose an appropriate number of days for the format. The schedule must have one entry per day.`;
 }
 
+/** Prompt for a portable residency not tied to one named site. */
+function buildGenericPrompt(opts: {
+  skill: string;
+  format: string;
+  level: string;
+  audience: string;
+  notes: string;
+}) {
+  return `Design a teacher residency that is PORTABLE: not tied to one named site, suitable for any regenerative farm, homestead, eco-building project, or permaculture site willing to host it.
+
+SKILL THE TEACHER OFFERS: ${opts.skill}
+
+HOST SITE: not yet chosen. Write the residency so it works at a typical living, regenerative landscape. Where you would normally name the site, refer to it generally ("the host site", "the land", "your hosts"). The hands-on work should advance the kinds of real projects such places commonly need (building soil, planting, natural building, water, habitat), while always centring what students learn and take away.
+
+DESIRED FORMAT: ${opts.format}
+STUDENT LEVEL: ${opts.level}
+WHO IT'S FOR: ${opts.audience}${
+    opts.notes
+      ? `\n\nWHAT THE TEACHER WANTS, IN THEIR OWN WORDS (honour this closely, weaving in their requested activities, emphasis, and style):\n${opts.notes}`
+      : ""
+  }
+
+For "whyThisMatch", explain why this skill suits hands-on regenerative land in general. For "hostPitch", write a warm template message the teacher could send to ANY prospective host, describing what they would bring and what the land would gain. Choose an appropriate number of days for the format. The schedule must have one entry per day.`;
+}
+
 const FORMAT_LABELS: Record<string, string> = {
   day: "a single immersive day course",
   weekend: "a weekend workshop (2–3 days)",
@@ -104,8 +129,10 @@ export async function POST(request: Request) {
   if ("error" in guard) return guard.error;
   const body = guard.body as DesignRequest;
 
-  const host = getHost(body.hostId);
-  if (!host) {
+  // A specific host is optional: with one we design for that site; without one
+  // we design a portable residency for "any landscape willing to host".
+  const host = body.hostId ? getHost(body.hostId) : undefined;
+  if (body.hostId && !host) {
     return Response.json({ error: "Unknown host site." }, { status: 404 });
   }
   if (!body.skill?.trim()) {
@@ -127,18 +154,26 @@ export async function POST(request: Request) {
 
   const client = new Anthropic();
 
-  const userPrompt = buildUserPrompt({
-    hostName: host.name,
-    location: [host.location.place, host.location.country].join(", "),
-    landType: host.landType,
-    story: host.story,
-    needs: host.needs,
-    skill: body.skill.trim(),
-    format: FORMAT_LABELS[body.format ?? "weekend"] ?? "a weekend workshop",
-    level: body.level?.trim() || "all levels welcome",
-    audience: body.audience?.trim() || "curious adults who want to learn by doing",
-    notes: body.details?.trim() || "",
-  });
+  const format = FORMAT_LABELS[body.format ?? "weekend"] ?? "a weekend workshop";
+  const level = body.level?.trim() || "all levels welcome";
+  const audience =
+    body.audience?.trim() || "curious adults who want to learn by doing";
+  const notes = body.details?.trim() || "";
+
+  const userPrompt = host
+    ? buildUserPrompt({
+        hostName: host.name,
+        location: [host.location.place, host.location.country].join(", "),
+        landType: host.landType,
+        story: host.story,
+        needs: host.needs,
+        skill: body.skill.trim(),
+        format,
+        level,
+        audience,
+        notes,
+      })
+    : buildGenericPrompt({ skill: body.skill.trim(), format, level, audience, notes });
 
   const encoder = new TextEncoder();
 

@@ -13,11 +13,13 @@ export function PublishResidencyButton({
   residency,
   hostId,
   hostName,
+  generic = false,
   variant = "outline",
 }: {
   residency: DesignedResidency;
   hostId: string;
   hostName: string;
+  generic?: boolean;
   variant?: "outline" | "solid";
 }) {
   const { enabled, user, profile, signIn } = useAuth();
@@ -140,9 +142,18 @@ export function PublishResidencyButton({
                   </button>
                 </div>
                 <p className="mt-1.5 text-sm leading-relaxed text-bark-soft">
-                  Make this residency a live listing at{" "}
-                  <span className="font-medium text-bark">{hostName}</span>.
-                  Students will be able to find and reserve it.
+                  {generic ? (
+                    <>
+                      Make this residency a live listing open to any willing
+                      host. Students will be able to find and reserve it.
+                    </>
+                  ) : (
+                    <>
+                      Make this residency a live listing at{" "}
+                      <span className="font-medium text-bark">{hostName}</span>.
+                      Students will be able to find and reserve it.
+                    </>
+                  )}
                 </p>
 
                 <div className="mt-5 space-y-4">
