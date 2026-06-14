@@ -76,8 +76,8 @@ export default function AboutPage() {
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
             <Image
-              src="/images/gathering-goldenhour.jpg"
-              alt="People gathered on the land at golden hour"
+              src="/images/about-hero.jpg"
+              alt="A residency group celebrating on a natural building they raised together"
               fill
               sizes="(max-width: 1024px) 100vw, 500px"
               className="object-cover"
