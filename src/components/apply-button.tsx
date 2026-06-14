@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { X, Check, Send, CalendarCheck, Loader2 } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
-import { isReserved, reserveCourse } from "@/lib/db";
+import { firebaseEnabled } from "@/lib/firebase";
+import { isReserved, reserveCourse, submitCourseRequest } from "@/lib/db";
 
 export function ApplyButton({
   courseTitle,
@@ -84,23 +85,47 @@ export function ApplyButton({
     );
   }
 
-  // ---- Signed-out (or Firebase off): existing request-by-email flow ----
-  return <RequestModal courseTitle={courseTitle} label={label} baseClass={baseClass} />;
+  // ---- Signed-out (or Firebase off): request-by-email flow, persisted ----
+  return (
+    <RequestModal
+      courseTitle={courseTitle}
+      courseId={courseId ?? courseSlug ?? courseTitle}
+      label={label}
+      baseClass={baseClass}
+    />
+  );
 }
 
 function RequestModal({
   courseTitle,
+  courseId,
   label,
   baseClass,
 }: {
   courseTitle: string;
+  courseId: string;
   label: string;
   baseClass: string;
 }) {
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  async function submit() {
+    if (saving) return;
+    setSaving(true);
+    try {
+      if (firebaseEnabled) {
+        await submitCourseRequest({ name, email, courseId, courseTitle, uid: null });
+      }
+    } catch (err) {
+      console.error("Course request failed to save", err);
+    }
+    setSaving(false);
+    setSent(true);
+  }
 
   function close() {
     setOpen(false);
@@ -163,7 +188,7 @@ function RequestModal({
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  setSent(true);
+                  void submit();
                 }}
                 className="mt-4 space-y-4"
               >
@@ -194,10 +219,11 @@ function RequestModal({
                 </div>
                 <button
                   type="submit"
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-clay-deep"
+                  disabled={saving}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-clay-deep disabled:opacity-60"
                 >
                   <Send className="h-4 w-4" />
-                  Send request
+                  {saving ? "Sending…" : "Send request"}
                 </button>
               </form>
             )}

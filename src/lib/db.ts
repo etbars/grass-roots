@@ -46,6 +46,20 @@ export async function submitHostApplication(
   });
 }
 
+/** A "request to join" from a visitor (signed-in users reserve directly instead). */
+export async function submitCourseRequest(data: {
+  name: string;
+  email: string;
+  courseId: string;
+  courseTitle: string;
+  uid: string | null;
+}) {
+  await addDoc(collection(requireDb(), "courseRequests"), {
+    ...data,
+    createdAt: serverTimestamp(),
+  });
+}
+
 export interface SavedResidency {
   id: string;
   uid: string;
