@@ -21,7 +21,7 @@ export const getFoundingTier = (id?: string) =>
   FOUNDING_TIERS.find((t) => t.id === id);
 
 /**
- * Whether the founding campaign is live. When true, the site-wide banner and
- * home band show. Flip to false to take the campaign down.
+ * Whether the founding campaign is live. When true, the founding banner and
+ * home band show. When false, the demo notice + waitlist banner shows instead.
  */
-export const FOUNDING_LIVE = true;
+export const FOUNDING_LIVE = false;

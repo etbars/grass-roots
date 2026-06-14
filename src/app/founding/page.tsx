@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Bookmark, Rocket, Gift, ShieldCheck, Infinity, RefreshCw } from "lucide-react";
 import { FoundingOffer } from "@/components/founding-offer";
+import { FOUNDING_LIVE } from "@/lib/founding";
 
 export const metadata: Metadata = {
   title: "Founding members · Grass Roots",
@@ -33,6 +35,7 @@ const PROMISES = [
 ];
 
 export default function FoundingPage() {
+  if (!FOUNDING_LIVE) redirect("/waitlist");
   return (
     <>
       {/* Hero */}
