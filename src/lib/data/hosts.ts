@@ -198,6 +198,7 @@ export const hosts: Host[] = [
       "Set up a mushroom cultivation yard using farm waste",
       "Expand the edible food-forest planting",
       "Build raised market-garden beds for the campground",
+      "Plan rotational grazing across the demonstration paddocks",
     ],
     offers: [
       "A self-contained caravan or glamping tent",
@@ -326,6 +327,7 @@ export const hosts: Host[] = [
       "Graft and prune the heritage fruit orchard",
       "Set up a small raw-milk dairy and cheese cave",
       "Sow herbal leys and lay out grazing paddocks",
+      "Preserve the orchard and dairy glut in the farmhouse kitchen",
     ],
     offers: [
       "A room in the old farmhouse",
@@ -426,6 +428,7 @@ export const hosts: Host[] = [
       "Rebuild dry-stone retaining walls along the high pasture",
       "Restore a spring-fed water trough and channel",
       "Plant a hardy alpine kitchen garden and polytunnel",
+      "Make and age cheese from the summer alpine dairy",
     ],
     offers: [
       "A bed in the restored hay-barn loft",

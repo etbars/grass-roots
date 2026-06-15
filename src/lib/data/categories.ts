@@ -57,4 +57,18 @@ export const categories: Category[] = [
     image: "/images/forest.jpg",
     icon: "Compass",
   },
+  {
+    id: "fire-fermentation",
+    name: "Fire & Fermentation",
+    blurb: "Turn the harvest into food: wood-fired cooking, cheese, and the fermented pantry.",
+    image: "/images/wild-fermentation.jpg",
+    icon: "Flame",
+  },
+  {
+    id: "animal-husbandry",
+    name: "Animal Husbandry",
+    blurb: "Raise healthy animals and tend pasture: dairy, herd care, and grazing that builds soil.",
+    image: "/images/cattle-pasture.jpg",
+    icon: "Egg",
+  },
 ];

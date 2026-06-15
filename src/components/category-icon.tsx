@@ -7,6 +7,8 @@ import {
   Trees,
   Flower2,
   Compass,
+  Flame,
+  Egg,
   type LucideProps,
 } from "lucide-react";
 import type { CategoryId } from "@/lib/types";
@@ -20,6 +22,8 @@ const MAP: Record<CategoryId, React.ComponentType<LucideProps>> = {
   "food-forest": Trees,
   "mushroom-cultivation": Flower2,
   foraging: Compass,
+  "fire-fermentation": Flame,
+  "animal-husbandry": Egg,
 };
 
 export function CategoryIcon({

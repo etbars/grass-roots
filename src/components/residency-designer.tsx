@@ -48,7 +48,8 @@ const SKILL_SUGGESTIONS = [
   "Herbal medicine",
   "Mushroom cultivation",
   "Food forest design",
-  "Woodworking & tiny homes",
+  "Fermentation & preserving",
+  "Animal husbandry",
   "Wild foraging",
 ];
 
