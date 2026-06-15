@@ -13,6 +13,7 @@ import { FOUNDING_LIVE } from "@/lib/founding";
 import { CourseCard } from "@/components/course-card";
 import { CategoryIcon } from "@/components/category-icon";
 import { FoundingBand } from "@/components/founding-band";
+import { HeroVideo } from "@/components/hero-video";
 
 const TESTIMONIALS = [
   {
@@ -53,19 +54,7 @@ export default function Home() {
       {/* ---------- Hero ---------- */}
       <section className="relative isolate overflow-hidden bg-bark">
         {/* Background video — a cob house, built start to finish */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <iframe
-            title="A cob house, built start to finish"
-            src="https://www.youtube-nocookie.com/embed/QwyHIoqgTrc?autoplay=1&mute=1&loop=1&playlist=QwyHIoqgTrc&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&start=24"
-            allow="autoplay; encrypted-media; picture-in-picture"
-            aria-hidden="true"
-            tabIndex={-1}
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2 scale-150"
-          />
-          {/* readability overlay */}
-          <div className="absolute inset-0 bg-bark/55" />
-          <div className="absolute inset-0 bg-gradient-to-t from-bark/85 via-bark/35 to-bark/55" />
-        </div>
+        <HeroVideo />
 
         <div className="mx-auto max-w-7xl px-5 py-28 sm:px-8 lg:py-40">
           <div className="max-w-2xl">
