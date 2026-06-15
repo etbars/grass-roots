@@ -50,6 +50,8 @@ const SKILL_SUGGESTIONS = [
   "Food forest design",
   "Fermentation & preserving",
   "Animal husbandry",
+  "Water & earthworks",
+  "Off-grid systems",
   "Wild foraging",
 ];
 

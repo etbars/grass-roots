@@ -71,4 +71,18 @@ export const categories: Category[] = [
     image: "/images/cattle-pasture.jpg",
     icon: "Egg",
   },
+  {
+    id: "water-earthworks",
+    name: "Water & Earthworks",
+    blurb: "Hold water in the land: swales, keyline, ponds, springs, and rainwater.",
+    image: "/images/agroforestry-water.jpg",
+    icon: "Droplets",
+  },
+  {
+    id: "off-grid-tech",
+    name: "Off-grid & Appropriate Tech",
+    blurb: "Power, water, and warmth off the mains: solar, springs, rocket stoves, and simple systems that work.",
+    image: "/images/cabin-forest.jpg",
+    icon: "Zap",
+  },
 ];

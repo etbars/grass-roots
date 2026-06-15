@@ -10,7 +10,9 @@ export type CategoryId =
   | "mushroom-cultivation"
   | "foraging"
   | "fire-fermentation"
-  | "animal-husbandry";
+  | "animal-husbandry"
+  | "water-earthworks"
+  | "off-grid-tech";
 
 export interface Category {
   id: CategoryId;

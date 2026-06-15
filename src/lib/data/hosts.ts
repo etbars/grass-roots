@@ -16,6 +16,7 @@ export const hosts: Host[] = [
       "Restore and extend the forest-garden swales to slow water on the slope",
       "Build a cob bread oven and outdoor cooking shelter",
       "Repair and re-plaster a weathered south-facing cob wall",
+      "Set up off-grid solar power and a gravity-fed water supply",
     ],
     offers: [
       "Private room in the cob house for the teacher-in-residence",
