@@ -41,18 +41,18 @@ Respond with a SINGLE valid JSON object and NOTHING else. No markdown, no code f
   "skillLevel": string — e.g. "All levels", "Beginner", "Intermediate",
   "groupSize": number — a sensible maximum cohort size,
   "schedule": array of { "day": number, "title": string, "activities": string[] } — a progressive itinerary of AT MOST 7 entries, each with 2 to 3 short activity bullets. Up to about a week, use one entry per day. For longer formats, cover key milestone days or phases instead of every day: set "day" to that block's starting day number and name the span in the title (e.g. "Days 4 to 7: Building the walls"). Never exceed 7 entries,
-  "studentOutcomes": string[], 3 to 4 short concrete takeaways the student leaves with,
+  "studentOutcomes": string[], exactly 3 short concrete takeaways the student leaves with,
   "landImpact": string[], 2 to 3 short real improvements to the land (a by-product of the learning),
-  "materials": string[], 4 to 5 short items, materials or tools used,
-  "whatToBring": string[], 4 to 5 short items the student should bring,
+  "materials": string[], 4 short items, materials or tools used,
+  "whatToBring": string[], 4 short items the student should bring,
   "whyThisMatch": string, 1 to 2 sentences on why this skill and this site fit together,
   "suggestedPrice": number, the fair price in euros that ONE student pays for the whole residency (realistic for this format, skill, and region),
   "materialsCostPerStudent": number, estimated euros of materials and consumables per student (0 if minimal),
   "pricingRationale": string, one short sentence explaining the price,
-  "listingDescription": string, two short warm paragraphs (about 35 words each) of student-facing marketing copy, with a blank line written as \\n\\n between them,
+  "listingDescription": string, two short warm paragraphs (about 25 words each) of student-facing marketing copy, with a blank line written as \\n\\n between them,
   "idealStudent": string, one sentence describing who this residency is perfect for,
   "socialBlurb": string, a punchy one or two sentence blurb the teacher could post on social media,
-  "hostPitch": string, a warm, ready-to-send first-person message from the teacher to the host (2 to 3 short sentences, covering what you would bring and what the land would gain)
+  "hostPitch": string, a warm, ready-to-send first-person message from the teacher to the host (2 short sentences, covering what you would bring and what the land would gain)
 }`;
 
 function buildUserPrompt(opts: {
