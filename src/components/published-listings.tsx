@@ -54,7 +54,8 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
   const categoryName =
     categories.find((c) => c.id === listing.categoryId)?.name ??
     listing.categoryId;
-  const forming = !listing.startDate;
+  const demo = listing.demo === true;
+  const forming = !demo && !listing.startDate;
 
   return (
     <Link
@@ -75,12 +76,14 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
         </div>
         <div
           className={
-            forming
-              ? "absolute right-3 top-3 rounded-full bg-fern/90 px-2.5 py-1 text-xs font-semibold text-paper"
-              : "absolute right-3 top-3 rounded-full bg-clay/95 px-2.5 py-1 text-xs font-semibold text-paper"
+            demo
+              ? "absolute right-3 top-3 rounded-full bg-bark/85 px-2.5 py-1 text-xs font-semibold text-paper backdrop-blur"
+              : forming
+                ? "absolute right-3 top-3 rounded-full bg-fern/90 px-2.5 py-1 text-xs font-semibold text-paper"
+                : "absolute right-3 top-3 rounded-full bg-clay/95 px-2.5 py-1 text-xs font-semibold text-paper"
           }
         >
-          {forming ? "Gathering interest" : "Just published"}
+          {demo ? "Demo" : forming ? "Gathering interest" : "Just published"}
         </div>
       </div>
 

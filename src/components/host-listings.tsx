@@ -52,11 +52,15 @@ export function HostListings({ hostId }: { hostId: string }) {
                   <CategoryIcon id={l.categoryId} className="h-3.5 w-3.5" />
                   {cat}
                 </div>
-                {!l.startDate && (
+                {l.demo ? (
+                  <div className="absolute right-3 top-3 rounded-full bg-bark/85 px-2.5 py-1 text-xs font-semibold text-paper backdrop-blur">
+                    Demo
+                  </div>
+                ) : !l.startDate ? (
                   <div className="absolute right-3 top-3 rounded-full bg-fern/90 px-2.5 py-1 text-xs font-semibold text-paper">
                     Gathering interest
                   </div>
-                )}
+                ) : null}
               </div>
               <div className="flex flex-1 flex-col p-5">
                 <h3 className="font-display text-lg font-semibold leading-snug text-bark group-hover:text-moss">

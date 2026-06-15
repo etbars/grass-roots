@@ -33,6 +33,9 @@ export function CourseCard({ course }: { course: CourseWithRelations }) {
         <div className="absolute right-3 top-3 rounded-full bg-clay/95 px-2.5 py-1 text-xs font-semibold text-paper">
           {FORMAT_LABEL[course.format]}
         </div>
+        <div className="absolute bottom-3 left-3 rounded-full bg-bark/85 px-2.5 py-1 text-xs font-semibold text-paper backdrop-blur">
+          Demo
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col p-5">

@@ -84,6 +84,9 @@ export default async function CourseDetailPage({
             {FORMAT_LABEL[course.format]}
           </span>
         </div>
+        <div className="absolute right-4 top-4 rounded-full bg-bark/85 px-3 py-1.5 text-sm font-semibold text-paper backdrop-blur">
+          Demonstration
+        </div>
       </div>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
@@ -225,11 +228,11 @@ export default async function CourseDetailPage({
                 courseTitle={course.title}
                 courseId={course.id}
                 courseSlug={course.slug}
+                demo
               />
             </div>
             <p className="mt-3 text-center text-xs text-bark-soft">
-              Demonstration only. Reserving records your interest, nothing is
-              booked or charged.
+              An illustrative sample course, shown to demonstrate the platform.
             </p>
           </div>
         </aside>

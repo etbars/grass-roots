@@ -198,6 +198,9 @@ export interface PublishedListing {
   // ISO date (YYYY-MM-DD) for a scheduled run, or null while the teacher is
   // still gauging interest ("forming").
   startDate: string | null;
+  // Seeded illustrative listings are flagged demo (not bookable). Listings
+  // published by real teachers leave this unset and are real/bookable.
+  demo?: boolean;
   skillLevel: string;
   groupSize: number;
   price: number;

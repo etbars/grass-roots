@@ -69,7 +69,8 @@ export function ListingDetail({ id }: { id: string }) {
     categories.find((c) => c.id === listing.categoryId)?.name ??
     listing.categoryId;
   const paragraphs = listing.listingDescription.split("\n\n").filter(Boolean);
-  const forming = !listing.startDate;
+  const demo = listing.demo === true;
+  const forming = !demo && !listing.startDate;
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
@@ -104,9 +105,15 @@ export function ListingDetail({ id }: { id: string }) {
           {categoryName}
         </div>
         <div className="absolute right-4 top-4 flex flex-col items-end gap-2">
-          <div className="flex items-center gap-1.5 rounded-full bg-clay/95 px-3 py-1.5 text-xs font-semibold text-paper">
-            <Globe className="h-3.5 w-3.5" /> Teacher published
-          </div>
+          {demo ? (
+            <div className="rounded-full bg-bark/85 px-3 py-1.5 text-xs font-semibold text-paper backdrop-blur">
+              Demonstration
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 rounded-full bg-clay/95 px-3 py-1.5 text-xs font-semibold text-paper">
+              <Globe className="h-3.5 w-3.5" /> Teacher published
+            </div>
+          )}
           {forming && (
             <div className="flex items-center gap-1.5 rounded-full bg-fern/90 px-3 py-1.5 text-xs font-semibold text-paper">
               <Sparkles className="h-3.5 w-3.5" /> Gathering interest
@@ -228,12 +235,15 @@ export function ListingDetail({ id }: { id: string }) {
                 coursePath={`/listings/${listing.id}`}
                 listingId={listing.id}
                 interest={forming}
+                demo={demo}
               />
             </div>
             <p className="mt-3 text-center text-xs text-bark-soft">
-              {forming
-                ? "Demonstration only. Registering records your interest and helps the teacher gauge demand."
-                : "Demonstration only. Reserving records your interest, nothing is booked or charged."}
+              {demo
+                ? "An illustrative sample listing, shown to demonstrate the platform."
+                : forming
+                  ? "Registering records your interest and helps the teacher gauge demand. Nothing is booked or charged."
+                  : "Reserving registers your interest with the teacher. Nothing is booked or charged."}
             </p>
           </div>
         </aside>

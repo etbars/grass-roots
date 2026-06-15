@@ -18,6 +18,7 @@ export function ApplyButton({
   coursePath,
   listingId,
   interest = false,
+  demo = false,
   className,
   label,
 }: {
@@ -29,10 +30,13 @@ export function ApplyButton({
   listingId?: string;
   /** "Forming" residency with no date: relabel to registering interest. */
   interest?: boolean;
+  /** Illustrative demo course: not open for sign-up. */
+  demo?: boolean;
   className?: string;
   label?: string;
 }) {
   const { enabled, user, profile } = useAuth();
+
   const baseClass =
     className ??
     "w-full rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-clay-deep";
@@ -47,6 +51,15 @@ export function ApplyButton({
       void isReserved(user!.uid, courseId!).then(setReserved);
     }
   }, [canReserve, user, courseId]);
+
+  // Demo courses are illustrative and not bookable (placed after hooks).
+  if (demo) {
+    return (
+      <div className="rounded-full border border-stone-soft bg-cream/70 px-5 py-3 text-center text-sm font-semibold text-bark-soft">
+        Demonstration · not open for sign-up
+      </div>
+    );
+  }
 
   if (canReserve) {
     async function reserve() {
