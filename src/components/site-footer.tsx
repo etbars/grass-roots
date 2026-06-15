@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 
 const footerNav = [
   {
@@ -44,6 +44,13 @@ export function SiteFooter() {
             About Grass Roots
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
+          <a
+            href="mailto:team@grassroots.earth"
+            className="mt-3 flex w-fit items-center gap-1.5 text-sm text-paper/75 transition-colors hover:text-paper"
+          >
+            <Mail className="h-3.5 w-3.5" />
+            team@grassroots.earth
+          </a>
         </div>
 
         {footerNav.map((col) => (
