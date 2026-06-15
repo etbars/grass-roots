@@ -16,6 +16,8 @@ export function PublishResidencyButton({
   generic = false,
   startDate = null,
   variant = "outline",
+  className,
+  publishLabel = "Publish",
 }: {
   residency: DesignedResidency;
   hostId: string;
@@ -23,6 +25,10 @@ export function PublishResidencyButton({
   generic?: boolean;
   startDate?: string | null;
   variant?: "outline" | "solid";
+  /** Override the trigger button styling (e.g. a full-width CTA). */
+  className?: string;
+  /** Label shown when signed in (signed-out always shows "Sign in to publish"). */
+  publishLabel?: string;
 }) {
   const { enabled, user, profile, openAuth } = useAuth();
   const [open, setOpen] = useState(false);
@@ -34,9 +40,10 @@ export function PublishResidencyButton({
   if (!enabled) return null;
 
   const trigger =
-    variant === "solid"
+    className ??
+    (variant === "solid"
       ? "inline-flex items-center gap-1.5 rounded-full bg-clay px-3.5 py-1.5 text-xs font-semibold text-paper transition-colors hover:bg-clay-deep"
-      : "inline-flex items-center gap-1.5 rounded-full border border-clay/40 px-3.5 py-1.5 text-xs font-semibold text-clay-deep transition-colors hover:bg-clay/10";
+      : "inline-flex items-center gap-1.5 rounded-full border border-clay/40 px-3.5 py-1.5 text-xs font-semibold text-clay-deep transition-colors hover:bg-clay/10");
 
   function onTrigger() {
     if (!user) {
@@ -87,7 +94,7 @@ export function PublishResidencyButton({
     <>
       <button type="button" onClick={onTrigger} className={trigger}>
         <Globe className="h-3.5 w-3.5" />
-        {user ? "Publish" : "Sign in to publish"}
+        {user ? publishLabel : "Sign in to publish"}
       </button>
 
       {open && (

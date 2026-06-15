@@ -1010,9 +1010,18 @@ function ResidencyResult({
         </div>
       </Section>
 
-      <button className="mt-8 w-full rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-clay-deep">
-        Publish this residency
-      </button>
+      <div className="mt-8">
+        <PublishResidencyButton
+          residency={residency}
+          hostId={hostId}
+          hostName={hostName}
+          generic={generic}
+          startDate={startDate}
+          variant="solid"
+          publishLabel="Publish this residency"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-clay-deep"
+        />
+      </div>
     </article>
   );
 }
