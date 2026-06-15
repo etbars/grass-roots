@@ -103,10 +103,14 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
 
         <div className="mt-4 flex items-end justify-between border-t border-stone-soft/70 pt-4">
           <div className="text-sm text-bark-soft">
-            <p className="flex items-center gap-1">
-              <CalendarDays className="h-3.5 w-3.5 text-fern" />
-              {forming ? "Dates forming" : `Starts ${formatDate(listing.startDate!)}`}
-            </p>
+            {!demo && (
+              <p className="flex items-center gap-1">
+                <CalendarDays className="h-3.5 w-3.5 text-fern" />
+                {listing.startDate
+                  ? `Starts ${formatDate(listing.startDate)}`
+                  : "Dates forming"}
+              </p>
+            )}
             <p className="mt-0.5 flex items-center gap-1">
               <Clock className="h-3.5 w-3.5 text-fern" />
               {listing.durationLabel}

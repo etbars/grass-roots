@@ -204,16 +204,16 @@ export function ListingDetail({ id }: { id: string }) {
               {formatPrice(listing.price)}
             </p>
             <ul className="mt-5 space-y-3 text-sm text-bark">
-              <li className="flex items-center gap-2.5">
-                <CalendarDays className="h-4 w-4 text-fern" />
-                {forming ? (
-                  <span className="text-bark-soft">
-                    Dates forming
-                  </span>
-                ) : (
-                  <>Starts {formatDate(listing.startDate!)}</>
-                )}
-              </li>
+              {!demo && (
+                <li className="flex items-center gap-2.5">
+                  <CalendarDays className="h-4 w-4 text-fern" />
+                  {listing.startDate ? (
+                    <>Starts {formatDate(listing.startDate)}</>
+                  ) : (
+                    <span className="text-bark-soft">Dates forming</span>
+                  )}
+                </li>
+              )}
               <li className="flex items-center gap-2.5">
                 <Clock className="h-4 w-4 text-fern" />
                 {listing.durationLabel}
