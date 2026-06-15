@@ -1,5 +1,8 @@
 import { aiGuard } from "@/lib/rate-limit";
-import { getListingTeacherContact } from "@/lib/admin-firestore";
+import {
+  getListingTeacherContact,
+  getUserContact,
+} from "@/lib/admin-firestore";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,11 +45,50 @@ export async function POST(request: Request) {
     name?: string;
     detail?: string;
     listingId?: string;
+    recipientUid?: string;
   };
 
   // Not configured yet: accept quietly so the sign-up flow is never affected.
   if (!process.env.RESEND_API_KEY) {
     return Response.json({ ok: false, reason: "not-configured" });
+  }
+
+  // In-app message: nudge the recipient by email to come back and reply.
+  if (body.type === "message") {
+    const recipientUid = (body.recipientUid || "").trim().slice(0, 80);
+    if (!recipientUid) return Response.json({ ok: false }, { status: 400 });
+    const recipient = await getUserContact(recipientUid);
+    if (!recipient?.email) {
+      return Response.json({ ok: false, reason: "no-recipient" });
+    }
+    const sender = (body.name || "Someone").trim().slice(0, 120);
+    const about = (body.detail || "").trim().slice(0, 200);
+    const subject = `New message from ${sender}${about ? ` about ${about}` : ""}`;
+    const html = `
+    <div style="font-family: ui-sans-serif, system-ui, sans-serif; line-height:1.6; color:#2a2620;">
+      <h2 style="margin:0 0 10px; font-size:18px;">You have a new message 🌱</h2>
+      <p style="margin:0;"><strong>${escapeHtml(sender)}</strong> messaged you${about ? ` about <strong>${escapeHtml(about)}</strong>` : ""} on Grass Roots.</p>
+      <p style="margin:14px 0 0;"><a href="https://grassroots.earth/messages" style="color:#3f6212; font-weight:600;">Open your messages</a> to read and reply.</p>
+    </div>`;
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: FROM,
+          to: [recipient.email],
+          subject,
+          html,
+        }),
+      });
+      if (!res.ok) return Response.json({ ok: false }, { status: 502 });
+    } catch {
+      return Response.json({ ok: false }, { status: 502 });
+    }
+    return Response.json({ ok: true });
   }
 
   const email = (body.email || "").trim().slice(0, 200);

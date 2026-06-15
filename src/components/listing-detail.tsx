@@ -21,6 +21,7 @@ import {
 import { categories, formatPrice, formatDate } from "@/lib/data";
 import { CategoryIcon } from "@/components/category-icon";
 import { ApplyButton } from "@/components/apply-button";
+import { MessageTeacherButton } from "@/components/message-teacher-button";
 import { useAuth } from "@/components/auth-provider";
 import { getListing, type PublishedListing } from "@/lib/db";
 
@@ -245,6 +246,16 @@ export function ListingDetail({ id }: { id: string }) {
                   ? "Registering records your interest and helps the teacher gauge demand. Nothing is booked or charged."
                   : "Reserving registers your interest with the teacher. Nothing is booked or charged."}
             </p>
+            {!demo && (
+              <div className="mt-3 border-t border-stone-soft pt-3">
+                <MessageTeacherButton
+                  listingId={listing.id}
+                  listingTitle={listing.title}
+                  teacherUid={listing.uid}
+                  teacherName={listing.teacherName}
+                />
+              </div>
+            )}
           </div>
         </aside>
       </div>

@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { LogOut, LayoutGrid, LayoutDashboard, LogIn } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  LogOut,
+  LayoutGrid,
+  LayoutDashboard,
+  LogIn,
+  MessageSquare,
+} from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
+import { watchConversations, isUnread } from "@/lib/db";
 import { cn } from "@/lib/utils";
 
 function initials(name: string, email: string) {
@@ -23,6 +30,17 @@ export function AccountMenu({
 }) {
   const { enabled, loading, user, profile, openAuth, signOutUser } = useAuth();
   const [open, setOpen] = useState(false);
+  const [unread, setUnread] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setUnread(false);
+      return;
+    }
+    return watchConversations(user.uid, (cs) =>
+      setUnread(cs.some((c) => isUnread(c, user.uid))),
+    );
+  }, [user]);
 
   if (!enabled || loading) return null;
 
@@ -74,6 +92,15 @@ export function AccountMenu({
           Dashboard
         </Link>
         <Link
+          href="/messages"
+          onClick={onNavigate}
+          className="flex items-center justify-center gap-2 rounded-full border border-moss/30 px-4 py-2.5 text-sm font-semibold text-moss-deep"
+        >
+          <MessageSquare className="h-4 w-4" />
+          Messages
+          {unread && <span className="h-2 w-2 rounded-full bg-clay" />}
+        </Link>
+        <Link
           href="/account"
           onClick={onNavigate}
           className="flex items-center gap-2 rounded-full border border-moss/30 px-4 py-2.5 text-sm font-semibold text-moss-deep"
@@ -110,6 +137,9 @@ export function AccountMenu({
       >
         {label}
       </button>
+      {unread && !open && (
+        <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-clay ring-2 ring-cream" />
+      )}
 
       {open && (
         <>
@@ -145,6 +175,17 @@ export function AccountMenu({
             >
               <LayoutDashboard className="h-4 w-4 text-fern" />
               Dashboard
+            </Link>
+            <Link
+              href="/messages"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-bark transition-colors hover:bg-fern/10"
+            >
+              <MessageSquare className="h-4 w-4 text-fern" />
+              Messages
+              {unread && (
+                <span className="ml-auto h-2 w-2 rounded-full bg-clay" />
+              )}
             </Link>
             <Link
               href="/account"

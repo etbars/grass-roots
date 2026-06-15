@@ -7,11 +7,14 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
+  orderBy,
   query,
   serverTimestamp,
   setDoc,
   updateDoc,
   where,
+  type Timestamp,
 } from "firebase/firestore";
 import {
   getDownloadURL,
@@ -356,4 +359,128 @@ export async function addHostNeed(
 
 export async function deleteHostNeed(id: string) {
   await deleteDoc(doc(requireDb(), "hostNeeds", id));
+}
+
+// ---- Two-way messaging: conversations between a student and a teacher ----
+
+export interface Conversation {
+  id: string;
+  participants: string[];
+  studentUid: string;
+  teacherUid: string;
+  studentName: string;
+  teacherName: string;
+  listingId: string;
+  listingTitle: string;
+  lastMessage?: string;
+  lastMessageAt?: Timestamp | null;
+  lastSenderUid?: string;
+  reads?: Record<string, Timestamp>;
+}
+
+export interface Message {
+  id: string;
+  senderUid: string;
+  senderName: string;
+  text: string;
+  createdAt?: Timestamp | null;
+}
+
+/** One conversation per student per listing, so re-messaging reuses the thread. */
+export const conversationId = (listingId: string, studentUid: string) =>
+  `${listingId}__${studentUid}`;
+
+export async function startConversation(c: {
+  listingId: string;
+  listingTitle: string;
+  studentUid: string;
+  studentName: string;
+  teacherUid: string;
+  teacherName: string;
+}): Promise<string> {
+  const id = conversationId(c.listingId, c.studentUid);
+  await setDoc(
+    doc(requireDb(), "conversations", id),
+    {
+      participants: [c.studentUid, c.teacherUid],
+      studentUid: c.studentUid,
+      studentName: c.studentName,
+      teacherUid: c.teacherUid,
+      teacherName: c.teacherName,
+      listingId: c.listingId,
+      listingTitle: c.listingTitle,
+      createdAt: serverTimestamp(),
+    },
+    { merge: true },
+  );
+  return id;
+}
+
+export async function sendMessage(
+  convId: string,
+  sender: { uid: string; name: string },
+  text: string,
+) {
+  const body = text.trim().slice(0, 4000);
+  if (!body) return;
+  await addDoc(collection(requireDb(), "conversations", convId, "messages"), {
+    senderUid: sender.uid,
+    senderName: sender.name,
+    text: body,
+    createdAt: serverTimestamp(),
+  });
+  await updateDoc(doc(requireDb(), "conversations", convId), {
+    lastMessage: body.slice(0, 200),
+    lastMessageAt: serverTimestamp(),
+    lastSenderUid: sender.uid,
+  });
+}
+
+/** Live list of the user's conversations (newest activity first). */
+export function watchConversations(
+  uid: string,
+  cb: (convos: Conversation[]) => void,
+): () => void {
+  const q = query(
+    collection(requireDb(), "conversations"),
+    where("participants", "array-contains", uid),
+  );
+  return onSnapshot(q, (snap) => {
+    const list = snap.docs.map(
+      (d) => ({ id: d.id, ...(d.data() as Omit<Conversation, "id">) }),
+    );
+    list.sort(
+      (a, b) =>
+        (b.lastMessageAt?.toMillis?.() ?? 0) -
+        (a.lastMessageAt?.toMillis?.() ?? 0),
+    );
+    cb(list);
+  });
+}
+
+/** Live messages in a conversation, oldest first. */
+export function watchMessages(
+  convId: string,
+  cb: (messages: Message[]) => void,
+): () => void {
+  const q = query(
+    collection(requireDb(), "conversations", convId, "messages"),
+    orderBy("createdAt", "asc"),
+  );
+  return onSnapshot(q, (snap) => {
+    cb(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Message, "id">) })));
+  });
+}
+
+export async function markConversationRead(convId: string, uid: string) {
+  await updateDoc(doc(requireDb(), "conversations", convId), {
+    [`reads.${uid}`]: serverTimestamp(),
+  });
+}
+
+/** A conversation is unread for me if the last message is theirs and newer than my last read. */
+export function isUnread(c: Conversation, uid: string): boolean {
+  if (!c.lastMessageAt || c.lastSenderUid === uid) return false;
+  const read = c.reads?.[uid];
+  return !read || (read.toMillis?.() ?? 0) < (c.lastMessageAt.toMillis?.() ?? 0);
 }

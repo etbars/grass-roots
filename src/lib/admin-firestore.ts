@@ -119,3 +119,15 @@ export async function getListingTeacherContact(
     title: str(listing, "title"),
   };
 }
+
+/** Resolve a user's email + name (e.g. a message recipient) via admin. */
+export async function getUserContact(
+  uid: string,
+): Promise<{ email: string; name: string } | null> {
+  const token = await getToken();
+  if (!token) return null;
+  const user = await getDoc(token, `users/${uid}`);
+  const email = str(user, "email");
+  if (!email) return null;
+  return { email, name: str(user, "displayName") };
+}
