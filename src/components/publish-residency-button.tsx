@@ -24,7 +24,7 @@ export function PublishResidencyButton({
   startDate?: string | null;
   variant?: "outline" | "solid";
 }) {
-  const { enabled, user, profile, signIn } = useAuth();
+  const { enabled, user, profile, openAuth } = useAuth();
   const [open, setOpen] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [publishedId, setPublishedId] = useState<string | null>(null);
@@ -40,7 +40,7 @@ export function PublishResidencyButton({
 
   function onTrigger() {
     if (!user) {
-      void signIn();
+      openAuth();
       return;
     }
     setOpen(true);

@@ -9,13 +9,18 @@ import {
 } from "react";
 import {
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  updateProfile,
   type User,
 } from "firebase/auth";
 import { doc, onSnapshot, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db, firebaseEnabled } from "@/lib/firebase";
+import { AuthModal } from "@/components/auth-modal";
 
 export type UserRole = "student" | "teacher" | "host";
 
@@ -38,9 +43,15 @@ interface AuthValue {
   profile: AppUser | null;
   loading: boolean;
   signIn: () => Promise<void>;
+  signUpWithEmail: (name: string, email: string, password: string) => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   signOutUser: () => Promise<void>;
   setRoles: (roles: UserRole[]) => Promise<void>;
   setHostSites: (hostSites: string[]) => Promise<void>;
+  /** Open/close the shared sign-in modal (email/password + Google). */
+  openAuth: () => void;
+  closeAuth: () => void;
 }
 
 const AuthContext = createContext<AuthValue | null>(null);
@@ -49,8 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authOpen, setAuthOpen] = useState(false);
 
-  // Track the signed-in Firebase user.
+  // Track the signed-in Firebase user. Close the sign-in modal once in.
   useEffect(() => {
     if (!auth) {
       setLoading(false);
@@ -59,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
+      if (u) setAuthOpen(false);
     });
   }, []);
 
@@ -99,6 +112,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithPopup(auth, new GoogleAuthProvider());
   }
 
+  async function signUpWithEmail(name: string, email: string, password: string) {
+    if (!auth) return;
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const displayName = name.trim();
+    if (displayName) await updateProfile(cred.user, { displayName });
+    // Seed the profile doc with the name now, since onAuthStateChanged may have
+    // created it before updateProfile resolved.
+    if (db) {
+      await setDoc(
+        doc(db, "users", cred.user.uid),
+        { displayName, email: cred.user.email ?? email },
+        { merge: true },
+      );
+    }
+  }
+
+  async function signInWithEmail(email: string, password: string) {
+    if (!auth) return;
+    await signInWithEmailAndPassword(auth, email, password);
+  }
+
+  async function resetPassword(email: string) {
+    if (!auth) return;
+    await sendPasswordResetEmail(auth, email);
+  }
+
+  function openAuth() {
+    setAuthOpen(true);
+  }
+  function closeAuth() {
+    setAuthOpen(false);
+  }
+
   async function signOutUser() {
     if (auth) await signOut(auth);
   }
@@ -121,12 +167,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         loading,
         signIn,
+        signUpWithEmail,
+        signInWithEmail,
+        resetPassword,
         signOutUser,
         setRoles,
         setHostSites,
+        openAuth,
+        closeAuth,
       }}
     >
       {children}
+      <AuthModal
+        open={authOpen}
+        onClose={closeAuth}
+        signInWithGoogle={signIn}
+        signInWithEmail={signInWithEmail}
+        signUpWithEmail={signUpWithEmail}
+        resetPassword={resetPassword}
+      />
     </AuthContext.Provider>
   );
 }

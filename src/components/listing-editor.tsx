@@ -26,7 +26,7 @@ const SKILL_LEVELS = ["All levels", "Beginner", "Intermediate", "Advanced"];
 
 export function ListingEditor({ id }: { id: string }) {
   const router = useRouter();
-  const { enabled, loading, user, signIn } = useAuth();
+  const { enabled, loading, user, openAuth } = useAuth();
   const [listing, setListing] = useState<PublishedListing | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "missing">(
     "loading",
@@ -91,7 +91,7 @@ export function ListingEditor({ id }: { id: string }) {
         <p className="text-bark-soft">Sign in to edit your listing.</p>
         <button
           type="button"
-          onClick={() => void signIn()}
+          onClick={() => openAuth()}
           className="mt-4 inline-flex items-center gap-2 rounded-full bg-moss px-5 py-2.5 text-sm font-semibold text-paper hover:bg-moss-deep"
         >
           <LogIn className="h-4 w-4" /> Sign in

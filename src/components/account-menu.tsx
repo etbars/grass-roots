@@ -21,7 +21,7 @@ export function AccountMenu({
   variant?: "desktop" | "mobile";
   onNavigate?: () => void;
 }) {
-  const { enabled, loading, user, profile, signIn, signOutUser } = useAuth();
+  const { enabled, loading, user, profile, openAuth, signOutUser } = useAuth();
   const [open, setOpen] = useState(false);
 
   if (!enabled || loading) return null;
@@ -34,7 +34,7 @@ export function AccountMenu({
           type="button"
           onClick={() => {
             onNavigate?.();
-            void signIn();
+            openAuth();
           }}
           className="flex items-center justify-center gap-2 rounded-full border border-moss/30 px-4 py-2.5 text-sm font-semibold text-moss-deep"
         >
@@ -46,7 +46,7 @@ export function AccountMenu({
     return (
       <button
         type="button"
-        onClick={() => void signIn()}
+        onClick={() => openAuth()}
         className="rounded-full px-4 py-2 text-sm font-semibold text-moss-deep transition-colors hover:bg-fern/15"
       >
         Sign in

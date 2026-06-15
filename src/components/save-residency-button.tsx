@@ -15,14 +15,14 @@ export function SaveResidencyButton({
   hostId: string;
   hostName: string;
 }) {
-  const { enabled, user, signIn } = useAuth();
+  const { enabled, user, openAuth } = useAuth();
   const [state, setState] = useState<"idle" | "saving" | "saved">("idle");
 
   if (!enabled) return null;
 
   async function onClick() {
     if (!user) {
-      await signIn();
+      openAuth();
       return;
     }
     setState("saving");
