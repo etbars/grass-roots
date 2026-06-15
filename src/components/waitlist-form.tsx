@@ -20,6 +20,12 @@ export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
       if (firebaseEnabled) {
         await joinWaitlist({ email: mail, uid: user?.uid ?? null, source });
       }
+      // Notify the team inbox (best-effort; never blocks the signup).
+      void fetch("/api/notify-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "waitlist", email: mail, source }),
+      }).catch(() => {});
     } catch (err) {
       console.error("Waitlist join failed", err);
     }
