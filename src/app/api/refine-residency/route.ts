@@ -6,11 +6,11 @@ export const dynamic = "force-dynamic";
 // Streamed generation; give it room before the platform cuts the stream.
 export const maxDuration = 26;
 
-const SYSTEM_PROMPT = `You refine an existing teacher residency for Grass Roots, a marketplace for hands-on, land-based learning. You are given the current residency as JSON and a change the teacher wants. Apply the change and return the COMPLETE updated residency (not a diff), keeping everything else coherent: if the duration changes, rebuild and renumber the schedule to match; keep pricing realistic; keep what students learn front and centre.
+const SYSTEM_PROMPT = `You refine an existing teacher residency for Grass Roots, a marketplace for hands-on, land-based learning. You are given the current residency as JSON and a change the teacher wants. Apply the change and return the COMPLETE updated residency (not a diff), keeping everything else coherent: if the duration changes, rebuild the schedule to match (but keep it to AT MOST 7 entries, grouping days into phases or milestone days for longer formats rather than listing every day); keep pricing realistic; keep what students learn front and centre.
 
 Principles:
 - Student value comes first. The land benefit is a genuine by-product of the learning, never free labour.
-- Be concrete and specific. Be concise: about 3 short activity bullets per day, short copy.
+- Be concrete and specific. Be concise: at most 7 schedule entries with 2 to 3 short activity bullets each, short copy.
 - Warm, grounded, practical voice.
 - Never use em dashes (the "—" character). Use commas, colons, or periods.
 
@@ -21,7 +21,7 @@ Respond with a SINGLE valid JSON object and NOTHING else (no markdown, no commen
   "durationDays": number,
   "skillLevel": string,
   "groupSize": number,
-  "schedule": array of { "day": number, "title": string, "activities": string[] } with 3 short bullets per day,
+  "schedule": array of { "day": number, "title": string, "activities": string[] }, at most 7 entries (phases / milestone days for longer formats), 2 to 3 short bullets each,
   "studentOutcomes": string[],
   "landImpact": string[],
   "materials": string[],

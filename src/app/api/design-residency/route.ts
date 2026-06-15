@@ -25,7 +25,7 @@ Design principles — follow all of them:
 - STUDENT VALUE COMES FIRST. The residency is education: mentorship, real skills, portfolio-building, and community. Frame everything from what the student gains.
 - The benefit to the land/host is a genuine and beautiful by-product of the learning — never describe students as free labour, workers, or a workforce, and never imply they are there primarily to get the host's work done.
 - Be concrete and specific to THIS place, THIS skill, and THESE projects. Use the site's real context. No generic filler.
-- Make the day-by-day schedule build progressively: orientation and fundamentals first, hands-on practice in the middle, a real finished outcome by the end.
+- Make the schedule build progressively: orientation and fundamentals first, hands-on practice in the middle, a real finished outcome by the end. Keep it to AT MOST 7 entries. For formats up to about a week, one entry per day is fine; for longer formats, do NOT itemise every day, group days into phases or milestone days instead.
 - Warm, grounded, practical voice. Real-world craft, not corporate training.
 - Never use em dashes (the "—" character) anywhere in your writing. Use commas, colons, or periods instead.
 - Suggest a realistic price a student would happily pay for this format, skill, and region, plus a sober estimate of materials cost per student.
@@ -40,7 +40,7 @@ Respond with a SINGLE valid JSON object and NOTHING else. No markdown, no code f
   "durationDays": number — total days, appropriate to the format,
   "skillLevel": string — e.g. "All levels", "Beginner", "Intermediate",
   "groupSize": number — a sensible maximum cohort size,
-  "schedule": array of { "day": number, "title": string, "activities": string[] }, one object per day, each with exactly 3 short activity bullets,
+  "schedule": array of { "day": number, "title": string, "activities": string[] } — a progressive itinerary of AT MOST 7 entries, each with 2 to 3 short activity bullets. Up to about a week, use one entry per day. For longer formats, cover key milestone days or phases instead of every day: set "day" to that block's starting day number and name the span in the title (e.g. "Days 4 to 7: Building the walls"). Never exceed 7 entries,
   "studentOutcomes": string[], 3 to 4 short concrete takeaways the student leaves with,
   "landImpact": string[], 2 to 3 short real improvements to the land (a by-product of the learning),
   "materials": string[], 4 to 5 short items, materials or tools used,
@@ -84,7 +84,7 @@ WHO IT'S FOR: ${opts.audience}${
       : ""
   }
 
-Design a residency that teaches "${opts.skill}" here. The hands-on work should genuinely advance one or more of the site's real projects, while always centring what students learn and take away. Choose an appropriate number of days for the format. The schedule must have one entry per day.`;
+Design a residency that teaches "${opts.skill}" here. The hands-on work should genuinely advance one or more of the site's real projects, while always centring what students learn and take away. Choose an appropriate number of days for the format. Keep the schedule to at most 7 entries: one per day for short formats, or grouped phases / milestone days for longer ones, so it stays quick to read.`;
 }
 
 /** Prompt for a portable residency not tied to one named site. */
@@ -109,7 +109,7 @@ WHO IT'S FOR: ${opts.audience}${
       : ""
   }
 
-For "whyThisMatch", explain why this skill suits hands-on regenerative land in general. For "hostPitch", write a warm template message the teacher could send to ANY prospective host, describing what they would bring and what the land would gain. Choose an appropriate number of days for the format. The schedule must have one entry per day.`;
+For "whyThisMatch", explain why this skill suits hands-on regenerative land in general. For "hostPitch", write a warm template message the teacher could send to ANY prospective host, describing what they would bring and what the land would gain. Choose an appropriate number of days for the format. Keep the schedule to at most 7 entries: one per day for short formats, or grouped phases / milestone days for longer ones, so it stays quick to read.`;
 }
 
 const FORMAT_LABELS: Record<string, string> = {
