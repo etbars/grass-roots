@@ -73,13 +73,29 @@ export function ApplyButton({
           path: coursePath,
         });
         // On teacher-published listings, also record interest so the teacher
-        // can see demand (works for both scheduled and forming listings).
+        // can see demand (works for both scheduled and forming listings), and
+        // email the teacher the lead (best-effort).
         if (listingId) {
+          const sName =
+            profile?.displayName || user!.displayName || "A student";
+          const sEmail = profile?.email || user!.email || "";
           await registerInterest(listingId, {
             uid: user!.uid,
-            name: profile?.displayName || user!.displayName || "A student",
-            email: profile?.email || user!.email || "",
+            name: sName,
+            email: sEmail,
           });
+          void fetch("/api/notify-signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              type: "interest",
+              source: "interest",
+              listingId,
+              email: sEmail,
+              name: sName,
+              detail: courseTitle,
+            }),
+          }).catch(() => {});
         }
         setReserved(true);
       } catch (err) {
@@ -123,6 +139,7 @@ export function ApplyButton({
     <RequestModal
       courseTitle={courseTitle}
       courseId={courseId ?? courseSlug ?? courseTitle}
+      listingId={listingId}
       label={label ?? (interest ? "Register interest" : "Request to join")}
       interest={interest}
       baseClass={baseClass}
@@ -133,12 +150,14 @@ export function ApplyButton({
 function RequestModal({
   courseTitle,
   courseId,
+  listingId,
   label,
   interest = false,
   baseClass,
 }: {
   courseTitle: string;
   courseId: string;
+  listingId?: string;
   label: string;
   interest?: boolean;
   baseClass: string;
@@ -156,13 +175,14 @@ function RequestModal({
       if (firebaseEnabled) {
         await submitCourseRequest({ name, email, courseId, courseTitle, uid: null });
       }
-      // Notify the team inbox (best-effort; never blocks the request).
+      // Notify the teacher (or the team inbox if not resolvable); best-effort.
       void fetch("/api/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: "courseRequest",
           source: "courseRequest",
+          listingId,
           email,
           name,
           detail: courseTitle,

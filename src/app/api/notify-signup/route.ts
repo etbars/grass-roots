@@ -1,4 +1,5 @@
 import { aiGuard } from "@/lib/rate-limit";
+import { getListingTeacherContact } from "@/lib/admin-firestore";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ const LABELS: Record<string, string> = {
   waitlist: "waitlist signup",
   founding: "founding-member interest",
   courseRequest: "course request",
+  interest: "course interest",
 };
 
 function escapeHtml(s: string) {
@@ -39,6 +41,7 @@ export async function POST(request: Request) {
     source?: string;
     name?: string;
     detail?: string;
+    listingId?: string;
   };
 
   // Not configured yet: accept quietly so the sign-up flow is never affected.
@@ -50,11 +53,42 @@ export async function POST(request: Request) {
   if (!email) return Response.json({ ok: false }, { status: 400 });
   const source = (body.source || body.type || "waitlist").trim().slice(0, 40);
   const name = (body.name || "").trim().slice(0, 120);
-  const detail = (body.detail || "").trim().slice(0, 200);
-  const label = LABELS[source] ?? "signup";
+  let detail = (body.detail || "").trim().slice(0, 200);
+  const listingId = (body.listingId || "").trim().slice(0, 80);
 
-  const subject = `New ${label}: ${email}`;
-  const html = `
+  // Interest in a real teacher listing: notify that teacher directly (with a
+  // copy to the team). Falls back to the team inbox if admin isn't configured
+  // or the teacher can't be resolved.
+  let to = TO;
+  let bcc: string | undefined;
+  let toTeacher = false;
+  if (listingId) {
+    const teacher = await getListingTeacherContact(listingId);
+    if (teacher?.email) {
+      to = teacher.email;
+      bcc = TO;
+      toTeacher = true;
+      if (teacher.title) detail = teacher.title;
+    }
+  }
+
+  const label = LABELS[source] ?? "signup";
+  const studentName = name || email;
+
+  const subject = toTeacher
+    ? `New interest in your course${detail ? `: ${detail}` : ""}`
+    : `New ${label}: ${email}`;
+
+  const html = toTeacher
+    ? `
+    <div style="font-family: ui-sans-serif, system-ui, sans-serif; line-height:1.6; color:#2a2620;">
+      <h2 style="margin:0 0 10px; font-size:18px;">Someone wants to join your course 🌱</h2>
+      ${detail ? `<p style="margin:0;"><strong>Course:</strong> ${escapeHtml(detail)}</p>` : ""}
+      <p style="margin:0;"><strong>From:</strong> ${escapeHtml(studentName)}</p>
+      <p style="margin:0;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+      <p style="margin:14px 0 0; font-size:13px; color:#6b6457;">Just reply to this email to reach them. Sent by grassroots.earth.</p>
+    </div>`
+    : `
     <div style="font-family: ui-sans-serif, system-ui, sans-serif; line-height:1.6; color:#2a2620;">
       <h2 style="margin:0 0 10px; font-size:18px;">New ${escapeHtml(label)} 🌱</h2>
       ${name ? `<p style="margin:0;"><strong>Name:</strong> ${escapeHtml(name)}</p>` : ""}
@@ -73,15 +107,16 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         from: FROM,
-        to: [TO],
+        to: [to],
+        ...(bcc ? { bcc: [bcc] } : {}),
         reply_to: email,
         subject,
         html,
       }),
     });
     if (!res.ok) {
-      const detail = await res.text().catch(() => "");
-      console.error("Resend send failed", res.status, detail.slice(0, 300));
+      const errText = await res.text().catch(() => "");
+      console.error("Resend send failed", res.status, errText.slice(0, 300));
       return Response.json({ ok: false }, { status: 502 });
     }
   } catch (err) {
