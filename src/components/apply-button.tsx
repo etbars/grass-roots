@@ -156,6 +156,18 @@ function RequestModal({
       if (firebaseEnabled) {
         await submitCourseRequest({ name, email, courseId, courseTitle, uid: null });
       }
+      // Notify the team inbox (best-effort; never blocks the request).
+      void fetch("/api/notify-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "courseRequest",
+          source: "courseRequest",
+          email,
+          name,
+          detail: courseTitle,
+        }),
+      }).catch(() => {});
     } catch (err) {
       console.error("Course request failed to save", err);
     }

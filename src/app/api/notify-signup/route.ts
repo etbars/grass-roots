@@ -38,6 +38,7 @@ export async function POST(request: Request) {
     email?: string;
     source?: string;
     name?: string;
+    detail?: string;
   };
 
   // Not configured yet: accept quietly so the sign-up flow is never affected.
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
   if (!email) return Response.json({ ok: false }, { status: 400 });
   const source = (body.source || body.type || "waitlist").trim().slice(0, 40);
   const name = (body.name || "").trim().slice(0, 120);
+  const detail = (body.detail || "").trim().slice(0, 200);
   const label = LABELS[source] ?? "signup";
 
   const subject = `New ${label}: ${email}`;
@@ -57,6 +59,7 @@ export async function POST(request: Request) {
       <h2 style="margin:0 0 10px; font-size:18px;">New ${escapeHtml(label)} 🌱</h2>
       ${name ? `<p style="margin:0;"><strong>Name:</strong> ${escapeHtml(name)}</p>` : ""}
       <p style="margin:0;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+      ${detail ? `<p style="margin:0;"><strong>Course:</strong> ${escapeHtml(detail)}</p>` : ""}
       <p style="margin:0;"><strong>Source:</strong> ${escapeHtml(source)}</p>
       <p style="margin:14px 0 0; font-size:13px; color:#6b6457;">Sent automatically by grassroots.earth.</p>
     </div>`;
