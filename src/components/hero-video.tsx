@@ -9,7 +9,7 @@ const SRC =
   `&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&start=24`;
 
 // How long the branded panel holds before it dissolves to the video (ms).
-const HOLD = 1900;
+const HOLD = 2600;
 
 /**
  * Hero background video with a branded intro reveal. A bark panel carrying the
