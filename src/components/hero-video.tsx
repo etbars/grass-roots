@@ -49,7 +49,7 @@ export function HeroVideo() {
           allow="autoplay; encrypted-media; picture-in-picture"
           aria-hidden="true"
           tabIndex={-1}
-          className={`pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2 scale-150 ${
+          className={`pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2 scale-110 ${
             reduce ? "" : "transition-[filter] duration-[1300ms] ease-out"
           } ${revealed ? "blur-0 brightness-100" : "blur-xl brightness-[0.6]"}`}
         />
