@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import {
   MapPin,
   Clock,
+  CalendarDays,
   GraduationCap,
   Users,
   Sprout,
@@ -14,9 +15,10 @@ import {
   Loader2,
   ArrowLeft,
   Globe,
+  Sparkles,
   Pencil,
 } from "lucide-react";
-import { categories, formatPrice } from "@/lib/data";
+import { categories, formatPrice, formatDate } from "@/lib/data";
 import { CategoryIcon } from "@/components/category-icon";
 import { ApplyButton } from "@/components/apply-button";
 import { useAuth } from "@/components/auth-provider";
@@ -67,6 +69,7 @@ export function ListingDetail({ id }: { id: string }) {
     categories.find((c) => c.id === listing.categoryId)?.name ??
     listing.categoryId;
   const paragraphs = listing.listingDescription.split("\n\n").filter(Boolean);
+  const forming = !listing.startDate;
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
@@ -100,8 +103,15 @@ export function ListingDetail({ id }: { id: string }) {
           <CategoryIcon id={listing.categoryId} className="h-4 w-4" />
           {categoryName}
         </div>
-        <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-clay/95 px-3 py-1.5 text-xs font-semibold text-paper">
-          <Globe className="h-3.5 w-3.5" /> Teacher published
+        <div className="absolute right-4 top-4 flex flex-col items-end gap-2">
+          <div className="flex items-center gap-1.5 rounded-full bg-clay/95 px-3 py-1.5 text-xs font-semibold text-paper">
+            <Globe className="h-3.5 w-3.5" /> Teacher published
+          </div>
+          {forming && (
+            <div className="flex items-center gap-1.5 rounded-full bg-fern/90 px-3 py-1.5 text-xs font-semibold text-paper">
+              <Sparkles className="h-3.5 w-3.5" /> Gathering interest
+            </div>
+          )}
         </div>
       </div>
 
@@ -188,6 +198,16 @@ export function ListingDetail({ id }: { id: string }) {
             </p>
             <ul className="mt-5 space-y-3 text-sm text-bark">
               <li className="flex items-center gap-2.5">
+                <CalendarDays className="h-4 w-4 text-fern" />
+                {forming ? (
+                  <span className="text-bark-soft">
+                    Dates forming
+                  </span>
+                ) : (
+                  <>Starts {formatDate(listing.startDate!)}</>
+                )}
+              </li>
+              <li className="flex items-center gap-2.5">
                 <Clock className="h-4 w-4 text-fern" />
                 {listing.durationLabel}
               </li>
@@ -206,11 +226,14 @@ export function ListingDetail({ id }: { id: string }) {
                 courseId={listing.id}
                 courseSlug={listing.id}
                 coursePath={`/listings/${listing.id}`}
+                listingId={listing.id}
+                interest={forming}
               />
             </div>
             <p className="mt-3 text-center text-xs text-bark-soft">
-              Demonstration only. Reserving records your interest, nothing is
-              booked or charged.
+              {forming
+                ? "Demonstration only. Registering records your interest and helps the teacher gauge demand."
+                : "Demonstration only. Reserving records your interest, nothing is booked or charged."}
             </p>
           </div>
         </aside>

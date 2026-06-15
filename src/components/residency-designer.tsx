@@ -89,6 +89,10 @@ export function ResidencyDesigner({
   const [level, setLevel] = useState("All levels");
   const [audience, setAudience] = useState("");
   const [details, setDetails] = useState("");
+  const [dateMode, setDateMode] = useState<"none" | "set">("none");
+  const [startDate, setStartDate] = useState("");
+  const today = new Date().toISOString().slice(0, 10);
+  const publishDate = dateMode === "set" && startDate ? startDate : null;
 
   const [status, setStatus] = useState<Status>("idle");
   const [raw, setRaw] = useState("");
@@ -453,6 +457,53 @@ export function ResidencyDesigner({
             </div>
           </div>
 
+          {/* When? */}
+          <div>
+            <label className="text-sm font-semibold text-bark">When?</label>
+            <div className="mt-1.5 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setDateMode("none")}
+                aria-pressed={dateMode === "none"}
+                className={cn(
+                  "rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors",
+                  dateMode === "none"
+                    ? "border-moss bg-fern/10 text-moss-deep"
+                    : "border-stone-soft bg-cream/40 text-bark-soft hover:border-fern",
+                )}
+              >
+                No date yet
+              </button>
+              <button
+                type="button"
+                onClick={() => setDateMode("set")}
+                aria-pressed={dateMode === "set"}
+                className={cn(
+                  "rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors",
+                  dateMode === "set"
+                    ? "border-moss bg-fern/10 text-moss-deep"
+                    : "border-stone-soft bg-cream/40 text-bark-soft hover:border-fern",
+                )}
+              >
+                Set a start date
+              </button>
+            </div>
+            {dateMode === "set" ? (
+              <input
+                type="date"
+                min={today}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="mt-2 w-full rounded-lg border border-stone-soft bg-cream/40 px-3.5 py-2.5 text-sm text-bark outline-none focus:border-moss focus:ring-2 focus:ring-fern/30"
+              />
+            ) : (
+              <p className="mt-2 text-xs leading-relaxed text-bark-soft">
+                Publish without a date to gauge interest and build a waitlist
+                first. You can set a date later.
+              </p>
+            )}
+          </div>
+
           {/* Audience */}
           <div>
             <label className="text-sm font-semibold text-bark">
@@ -539,6 +590,7 @@ export function ResidencyDesigner({
             hostId={hostId}
             hostName={hostLabel}
             generic={generic}
+            startDate={publishDate}
             onChange={setResidency}
             onRefine={refine}
             refining={refining}
@@ -680,6 +732,7 @@ function ResidencyResult({
   hostId,
   hostName,
   generic,
+  startDate,
   onChange,
   onRefine,
   refining,
@@ -688,6 +741,7 @@ function ResidencyResult({
   hostId: string;
   hostName: string;
   generic?: boolean;
+  startDate: string | null;
   onChange: (next: DesignedResidency) => void;
   onRefine: (instruction: string) => void;
   refining: boolean;
@@ -729,6 +783,7 @@ function ResidencyResult({
             hostId={hostId}
             hostName={hostName}
             generic={generic}
+            startDate={startDate}
             variant="solid"
           />
         </div>

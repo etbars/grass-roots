@@ -11,13 +11,15 @@ import {
   Pencil,
   Globe,
   Bookmark,
+  Users,
 } from "lucide-react";
-import { categories, getHost, formatPrice } from "@/lib/data";
+import { categories, getHost, formatPrice, formatDate } from "@/lib/data";
 import { CategoryIcon } from "@/components/category-icon";
 import { PublishResidencyButton } from "@/components/publish-residency-button";
 import {
   getMyListings,
   getMyResidencies,
+  getInterestCount,
   type PublishedListing,
   type SavedResidency,
 } from "@/lib/db";
@@ -41,10 +43,19 @@ export function TeacherDashboard({
   const [error, setError] = useState<string | null>(null);
 
   const [listings, setListings] = useState<PublishedListing[] | null>(null);
+  const [interest, setInterest] = useState<Record<string, number>>({});
   const [drafts, setDrafts] = useState<SavedResidency[] | null>(null);
 
   useEffect(() => {
-    void getMyListings(uid).then(setListings);
+    void getMyListings(uid).then(async (ls) => {
+      setListings(ls);
+      const counts = await Promise.all(
+        ls.map(
+          async (l) => [l.id, await getInterestCount(l.id).catch(() => 0)] as const,
+        ),
+      );
+      setInterest(Object.fromEntries(counts));
+    });
     void getMyResidencies(uid).then(setDrafts);
   }, [uid]);
 
@@ -206,6 +217,23 @@ export function TeacherDashboard({
                       {l.hostName} · {formatPrice(l.price)}
                     </span>
                   </Link>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <span
+                      className={
+                        l.startDate
+                          ? "rounded-full bg-clay/10 px-2.5 py-0.5 text-xs font-semibold text-clay-deep"
+                          : "rounded-full bg-fern/15 px-2.5 py-0.5 text-xs font-semibold text-moss-deep"
+                      }
+                    >
+                      {l.startDate
+                        ? `Starts ${formatDate(l.startDate)}`
+                        : "Gathering interest"}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-bark-soft">
+                      <Users className="h-3.5 w-3.5 text-fern" />
+                      {interest[l.id] ?? 0} interested
+                    </span>
+                  </div>
                   <div className="mt-2 flex items-center gap-4 text-sm font-semibold">
                     <Link
                       href={`/listings/${l.id}`}

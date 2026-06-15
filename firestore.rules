@@ -56,6 +56,17 @@ service cloud.firestore {
                     && request.auth.uid == request.resource.data.uid;
       allow update, delete: if request.auth != null
                     && request.auth.uid == resource.data.uid;
+
+      // Interest registrations ("gauge demand"). A signed-in student writes
+      // their own signup (doc id is their uid). The listing's owner may read
+      // every signup to see demand; the signer can read or withdraw their own.
+      match /signups/{uid} {
+        allow create: if request.auth != null && request.auth.uid == uid;
+        allow read: if request.auth != null
+                    && (request.auth.uid == uid
+                        || get(/databases/$(database)/documents/listings/$(id)).data.uid == request.auth.uid);
+        allow delete: if request.auth != null && request.auth.uid == uid;
+      }
     }
 
     // Course reservations are private to the user who made them.

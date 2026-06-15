@@ -41,7 +41,9 @@ export function ListingEditor({ id }: { id: string }) {
   const [skillLevel, setSkillLevel] = useState(SKILL_LEVELS[0]);
   const [groupSize, setGroupSize] = useState(8);
   const [durationDays, setDurationDays] = useState(1);
+  const [startDate, setStartDate] = useState("");
   const [description, setDescription] = useState("");
+  const today = new Date().toISOString().slice(0, 10);
   const [outcomes, setOutcomes] = useState("");
   const [materials, setMaterials] = useState("");
   const [bring, setBring] = useState("");
@@ -66,6 +68,7 @@ export function ListingEditor({ id }: { id: string }) {
       setSkillLevel(l.skillLevel);
       setGroupSize(l.groupSize);
       setDurationDays(l.durationDays);
+      setStartDate(l.startDate ?? "");
       setDescription(l.listingDescription);
       setOutcomes((l.studentOutcomes ?? []).join("\n"));
       setMaterials((l.materials ?? []).join("\n"));
@@ -144,6 +147,7 @@ export function ListingEditor({ id }: { id: string }) {
         groupSize: Number(groupSize) || 1,
         durationDays: Number(durationDays) || 1,
         durationLabel: `${durationDays} ${Number(durationDays) === 1 ? "day" : "days"}`,
+        startDate: startDate || null,
         listingDescription: description,
         studentOutcomes: lines(outcomes),
         materials: lines(materials),
@@ -286,6 +290,26 @@ export function ListingEditor({ id }: { id: string }) {
               onChange={(e) => setDurationDays(Number(e.target.value))}
               className={inputCls}
             />
+          </Field>
+          <Field label="Start date" hint="Empty = gather interest">
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                min={today}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className={inputCls}
+              />
+              {startDate && (
+                <button
+                  type="button"
+                  onClick={() => setStartDate("")}
+                  className="shrink-0 text-xs font-semibold text-bark-soft hover:text-clay"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </Field>
         </div>
 

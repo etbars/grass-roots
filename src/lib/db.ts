@@ -195,6 +195,9 @@ export interface PublishedListing {
   hook: string;
   durationDays: number;
   durationLabel: string;
+  // ISO date (YYYY-MM-DD) for a scheduled run, or null while the teacher is
+  // still gauging interest ("forming").
+  startDate: string | null;
   skillLevel: string;
   groupSize: number;
   price: number;
@@ -263,6 +266,43 @@ export async function updateListing(
 
 export async function deleteListing(id: string) {
   await deleteDoc(doc(requireDb(), "listings", id));
+}
+
+/**
+ * Interest registrations on a listing ("gauge demand"). A signed-in student
+ * writes their own signup (doc id = their uid, so it's idempotent); the listing
+ * owner can read them all to see demand. Lives at listings/{id}/signups/{uid}.
+ */
+export interface Interest {
+  uid: string;
+  name: string;
+  email: string;
+}
+
+const signupRef = (listingId: string, uid: string) =>
+  doc(requireDb(), "listings", listingId, "signups", uid);
+
+export async function registerInterest(
+  listingId: string,
+  signer: Interest,
+) {
+  await setDoc(signupRef(listingId, signer.uid), {
+    ...signer,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function hasRegisteredInterest(listingId: string, uid: string) {
+  const snap = await getDoc(signupRef(listingId, uid));
+  return snap.exists();
+}
+
+/** Count of students who registered interest. Readable by the listing owner. */
+export async function getInterestCount(listingId: string): Promise<number> {
+  const snap = await getDocs(
+    collection(requireDb(), "listings", listingId, "signups"),
+  );
+  return snap.size;
 }
 
 /** Upload a listing photo to the owner's Storage folder, return its URL. */

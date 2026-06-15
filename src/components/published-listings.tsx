@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { MapPin, Clock, Globe } from "lucide-react";
-import { categories, formatPrice } from "@/lib/data";
+import { MapPin, Clock, CalendarDays, Globe } from "lucide-react";
+import { categories, formatPrice, formatDate } from "@/lib/data";
 import { CategoryIcon } from "@/components/category-icon";
 import { firebaseEnabled } from "@/lib/firebase";
 import { getPublishedListings, type PublishedListing } from "@/lib/db";
@@ -54,6 +54,7 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
   const categoryName =
     categories.find((c) => c.id === listing.categoryId)?.name ??
     listing.categoryId;
+  const forming = !listing.startDate;
 
   return (
     <Link
@@ -72,8 +73,14 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
           <CategoryIcon id={listing.categoryId} className="h-3.5 w-3.5" />
           {categoryName}
         </div>
-        <div className="absolute right-3 top-3 rounded-full bg-clay/95 px-2.5 py-1 text-xs font-semibold text-paper">
-          Just published
+        <div
+          className={
+            forming
+              ? "absolute right-3 top-3 rounded-full bg-fern/90 px-2.5 py-1 text-xs font-semibold text-paper"
+              : "absolute right-3 top-3 rounded-full bg-clay/95 px-2.5 py-1 text-xs font-semibold text-paper"
+          }
+        >
+          {forming ? "Gathering interest" : "Just published"}
         </div>
       </div>
 
@@ -92,10 +99,16 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
         </p>
 
         <div className="mt-4 flex items-end justify-between border-t border-stone-soft/70 pt-4">
-          <p className="flex items-center gap-1 text-sm text-bark-soft">
-            <Clock className="h-3.5 w-3.5 text-fern" />
-            {listing.durationLabel}
-          </p>
+          <div className="text-sm text-bark-soft">
+            <p className="flex items-center gap-1">
+              <CalendarDays className="h-3.5 w-3.5 text-fern" />
+              {forming ? "Dates forming" : `Starts ${formatDate(listing.startDate!)}`}
+            </p>
+            <p className="mt-0.5 flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5 text-fern" />
+              {listing.durationLabel}
+            </p>
+          </div>
           <p className="font-display text-xl font-semibold text-bark">
             {formatPrice(listing.price)}
           </p>

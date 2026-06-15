@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Globe, X, Check, Loader2, ArrowRight } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
-import { hosts, categories } from "@/lib/data";
+import { hosts, categories, formatDate } from "@/lib/data";
 import { publishListing } from "@/lib/db";
 import type { DesignedResidency } from "@/lib/residency-schema";
 import type { CategoryId } from "@/lib/types";
@@ -14,12 +14,14 @@ export function PublishResidencyButton({
   hostId,
   hostName,
   generic = false,
+  startDate = null,
   variant = "outline",
 }: {
   residency: DesignedResidency;
   hostId: string;
   hostName: string;
   generic?: boolean;
+  startDate?: string | null;
   variant?: "outline" | "solid";
 }) {
   const { enabled, user, profile, signIn } = useAuth();
@@ -64,6 +66,7 @@ export function PublishResidencyButton({
         hook: residency.hook,
         durationDays: n,
         durationLabel: `${n} ${n === 1 ? "day" : "days"}`,
+        startDate: startDate ?? null,
         skillLevel: residency.skillLevel,
         groupSize: residency.groupSize,
         price: Number(price) || 0,
@@ -152,6 +155,21 @@ export function PublishResidencyButton({
                       Make this residency a live listing at{" "}
                       <span className="font-medium text-bark">{hostName}</span>.
                       Students will be able to find and reserve it.
+                    </>
+                  )}
+                </p>
+
+                <p className="mt-3 rounded-lg bg-fern/10 px-3 py-2 text-xs leading-relaxed text-moss-deep">
+                  {startDate ? (
+                    <>
+                      <span className="font-semibold">Starts {formatDate(startDate)}.</span>{" "}
+                      Students can reserve a spot.
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-semibold">No date yet.</span> It goes
+                      live as &ldquo;gathering interest&rdquo; so students can
+                      register and you can gauge demand before you set a date.
                     </>
                   )}
                 </p>

@@ -4,24 +4,35 @@ import { useEffect, useState } from "react";
 import { X, Check, Send, CalendarCheck, Loader2 } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { firebaseEnabled } from "@/lib/firebase";
-import { isReserved, reserveCourse, submitCourseRequest } from "@/lib/db";
+import {
+  isReserved,
+  reserveCourse,
+  registerInterest,
+  submitCourseRequest,
+} from "@/lib/db";
 
 export function ApplyButton({
   courseTitle,
   courseId,
   courseSlug,
   coursePath,
+  listingId,
+  interest = false,
   className,
-  label = "Request to join",
+  label,
 }: {
   courseTitle: string;
   courseId?: string;
   courseSlug?: string;
   coursePath?: string;
+  /** Set for teacher-published listings: also records interest for the teacher. */
+  listingId?: string;
+  /** "Forming" residency with no date: relabel to registering interest. */
+  interest?: boolean;
   className?: string;
   label?: string;
 }) {
-  const { enabled, user } = useAuth();
+  const { enabled, user, profile } = useAuth();
   const baseClass =
     className ??
     "w-full rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-clay-deep";
@@ -48,6 +59,15 @@ export function ApplyButton({
           slug: courseSlug!,
           path: coursePath,
         });
+        // On teacher-published listings, also record interest so the teacher
+        // can see demand (works for both scheduled and forming listings).
+        if (listingId) {
+          await registerInterest(listingId, {
+            uid: user!.uid,
+            name: profile?.displayName || user!.displayName || "A student",
+            email: profile?.email || user!.email || "",
+          });
+        }
         setReserved(true);
       } catch (err) {
         console.error("Failed to reserve", err);
@@ -68,17 +88,17 @@ export function ApplyButton({
         {reserved ? (
           <>
             <Check className="h-4 w-4" />
-            Spot reserved
+            {interest ? "Interest registered" : "Spot reserved"}
           </>
         ) : reserving ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Reserving…
+            {interest ? "Registering…" : "Reserving…"}
           </>
         ) : (
           <>
             <CalendarCheck className="h-4 w-4" />
-            Reserve a spot
+            {interest ? "Register interest" : "Reserve a spot"}
           </>
         )}
       </button>
@@ -90,7 +110,8 @@ export function ApplyButton({
     <RequestModal
       courseTitle={courseTitle}
       courseId={courseId ?? courseSlug ?? courseTitle}
-      label={label}
+      label={label ?? (interest ? "Register interest" : "Request to join")}
+      interest={interest}
       baseClass={baseClass}
     />
   );
@@ -100,11 +121,13 @@ function RequestModal({
   courseTitle,
   courseId,
   label,
+  interest = false,
   baseClass,
 }: {
   courseTitle: string;
   courseId: string;
   label: string;
+  interest?: boolean;
   baseClass: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -153,7 +176,13 @@ function RequestModal({
           >
             <div className="flex items-start justify-between">
               <h3 className="font-display text-xl font-semibold text-bark">
-                {sent ? "Request sent" : "Request to join"}
+                {sent
+                  ? interest
+                    ? "Interest registered"
+                    : "Request sent"
+                  : interest
+                    ? "Register your interest"
+                    : "Request to join"}
               </h3>
               <button
                 onClick={close}
@@ -170,12 +199,25 @@ function RequestModal({
                   <Check className="h-7 w-7 text-moss" />
                 </div>
                 <p className="mt-4 text-bark">
-                  Thanks{name ? `, ${name.split(" ")[0]}` : ""}! Your request to
-                  join <span className="font-semibold">{courseTitle}</span> is on
-                  its way to the teacher.
+                  Thanks{name ? `, ${name.split(" ")[0]}` : ""}!{" "}
+                  {interest ? (
+                    <>
+                      We&apos;ll let you know when{" "}
+                      <span className="font-semibold">{courseTitle}</span> firms
+                      up a date.
+                    </>
+                  ) : (
+                    <>
+                      Your request to join{" "}
+                      <span className="font-semibold">{courseTitle}</span> is on
+                      its way to the teacher.
+                    </>
+                  )}
                 </p>
                 <p className="mt-2 text-sm text-bark-soft">
-                  They&apos;ll be in touch to confirm your place.
+                  {interest
+                    ? "Your interest helps the teacher gauge demand."
+                    : "They'll be in touch to confirm your place."}
                 </p>
                 <button
                   onClick={close}
@@ -200,7 +242,8 @@ function RequestModal({
                   Tell the teacher a little about you and we&apos;ll pass along
                   your interest in{" "}
                   <span className="font-medium text-bark">{courseTitle}</span>.
-                  Tip: sign in to reserve your spot in one click.
+                  Tip: sign in to {interest ? "register" : "reserve your spot"} in
+                  one click.
                 </p>
                 <div>
                   <label className="text-sm font-semibold text-bark">Name</label>
