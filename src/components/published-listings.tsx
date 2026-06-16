@@ -9,7 +9,13 @@ import { CategoryIcon } from "@/components/category-icon";
 import { firebaseEnabled } from "@/lib/firebase";
 import { getPublishedListings, type PublishedListing } from "@/lib/db";
 
-export function PublishedListings({ category }: { category?: string | null }) {
+export function PublishedListings({
+  category,
+  onlineOnly = false,
+}: {
+  category?: string | null;
+  onlineOnly?: boolean;
+}) {
   const [listings, setListings] = useState<PublishedListing[] | null>(null);
 
   useEffect(() => {
@@ -19,26 +25,40 @@ export function PublishedListings({ category }: { category?: string | null }) {
       .catch(() => setListings([]));
   }, []);
 
-  if (!listings || listings.length === 0) return null;
-  const filtered = category
+  // In the online-only view, render an empty state if there are none yet.
+  if (!listings) return null;
+  let filtered = category
     ? listings.filter((l) => l.categoryId === category)
     : listings;
-  if (filtered.length === 0) return null;
+  if (onlineOnly) filtered = filtered.filter((l) => l.mode === "online");
+
+  if (filtered.length === 0) {
+    if (!onlineOnly) return null;
+    return (
+      <div className="mt-8 rounded-2xl border border-dashed border-stone-soft bg-paper/50 p-8 text-center text-sm text-bark-soft">
+        No live online cohorts just yet. Check back soon, or design one in the
+        Residency Studio.
+      </div>
+    );
+  }
 
   return (
     <section className="mt-8 rounded-3xl border border-fern/30 bg-fern/5 p-6 sm:p-8">
       <div className="flex items-center gap-2 text-clay">
         <Globe className="h-5 w-5" />
         <span className="text-sm font-semibold uppercase tracking-wider">
-          Fresh from the Studio
+          {onlineOnly ? "Learn from anywhere" : "Fresh from the Studio"}
         </span>
       </div>
       <h2 className="mt-2 font-display text-2xl font-semibold text-bark sm:text-3xl">
-        Residencies teachers just published
+        {onlineOnly
+          ? "Live online cohorts"
+          : "Residencies teachers just published"}
       </h2>
       <p className="mt-1.5 text-bark-soft">
-        Designed in the Residency Studio and opened up for students. Be among
-        the first to join.
+        {onlineOnly
+          ? "Live, teacher-led courses you can join from anywhere. Be among the first to enroll."
+          : "Designed in the Residency Studio and opened up for students. Be among the first to join."}
       </p>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Globe } from "lucide-react";
 import { getAllCourses, categories } from "@/lib/data";
 import type { CategoryId } from "@/lib/types";
 import { CourseCard } from "@/components/course-card";
@@ -16,11 +17,14 @@ export const metadata: Metadata = {
 export default async function CoursesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; mode?: string }>;
 }) {
-  const { category } = await searchParams;
+  const { category, mode } = await searchParams;
+  const online = mode === "online";
   const all = getAllCourses();
-  const activeCategory = categories.find((c) => c.id === category)?.id;
+  const activeCategory = online
+    ? undefined
+    : categories.find((c) => c.id === category)?.id;
   const courses = activeCategory
     ? all.filter((c) => c.categoryId === activeCategory)
     : all;
@@ -39,7 +43,11 @@ export default async function CoursesPage({
 
       {/* filter bar */}
       <div className="mt-8 flex flex-wrap gap-2">
-        <FilterChip href="/courses" active={!activeCategory} label="All" />
+        <FilterChip
+          href="/courses"
+          active={!activeCategory && !online}
+          label="All"
+        />
         {categories.map((c) => (
           <FilterChip
             key={c.id}
@@ -49,20 +57,37 @@ export default async function CoursesPage({
             categoryId={c.id}
           />
         ))}
+        <FilterChip
+          href="/courses?mode=online"
+          active={online}
+          label="Online"
+          icon={<Globe className="h-4 w-4" />}
+        />
       </div>
 
-      <PublishedListings category={activeCategory ?? null} />
+      <PublishedListings category={activeCategory ?? null} onlineOnly={online} />
 
-      <p className="mt-8 text-sm text-bark-soft">
-        {courses.length} {courses.length === 1 ? "experience" : "experiences"}
-        {activeCategory ? ` in ${categories.find((c) => c.id === activeCategory)?.name}` : ""}
-      </p>
+      {online ? (
+        <p className="mt-8 text-sm text-bark-soft">
+          Live online cohorts you can join from anywhere.
+        </p>
+      ) : (
+        <>
+          <p className="mt-8 text-sm text-bark-soft">
+            {courses.length}{" "}
+            {courses.length === 1 ? "experience" : "experiences"}
+            {activeCategory
+              ? ` in ${categories.find((c) => c.id === activeCategory)?.name}`
+              : ""}
+          </p>
 
-      <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {courses.map((course) => (
-          <CourseCard key={course.id} course={course} />
-        ))}
-      </div>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {courses.map((course) => (
+              <CourseCard key={course.id} course={course} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -72,11 +97,13 @@ function FilterChip({
   active,
   label,
   categoryId,
+  icon,
 }: {
   href: string;
   active: boolean;
   label: string;
   categoryId?: CategoryId;
+  icon?: React.ReactNode;
 }) {
   return (
     <Link
@@ -89,6 +116,7 @@ function FilterChip({
       )}
     >
       {categoryId && <CategoryIcon id={categoryId} className="h-4 w-4" />}
+      {icon}
       {label}
     </Link>
   );
