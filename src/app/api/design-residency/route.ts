@@ -15,6 +15,8 @@ interface DesignRequest {
   level?: string;
   audience?: string;
   details?: string;
+  /** Live online cohort: no physical host site. */
+  online?: boolean;
 }
 
 const SYSTEM_PROMPT = `You are the residency designer for Grass Roots, a marketplace for hands-on, land-based learning at regenerative farms, homesteads, eco-building sites and permaculture projects.
@@ -112,6 +114,37 @@ WHO IT'S FOR: ${opts.audience}${
 For "whyThisMatch", explain why this skill suits hands-on regenerative land in general. For "hostPitch", write a warm template message the teacher could send to ANY prospective host, describing what they would bring and what the land would gain. Choose an appropriate number of days for the format. Keep the schedule to at most 7 entries: one per day for short formats, or grouped phases / milestone days for longer ones, so it stays quick to read.`;
 }
 
+/** Prompt for a live online cohort course (no physical host site). */
+function buildOnlinePrompt(opts: {
+  skill: string;
+  format: string;
+  level: string;
+  audience: string;
+  notes: string;
+}) {
+  return `Design a LIVE ONLINE cohort course. There is NO physical host site and no on-the-ground land work. This is taught over scheduled live online sessions (think live video calls and workshops), with students applying what they learn in their own context between sessions.
+
+SKILL THE TEACHER TEACHES: ${opts.skill}
+
+DESIRED CADENCE: ${opts.format} (interpret this as the intensity / span of the live cohort)
+STUDENT LEVEL: ${opts.level}
+WHO IT'S FOR: ${opts.audience}${
+    opts.notes
+      ? `\n\nWHAT THE TEACHER WANTS, IN THEIR OWN WORDS (honour this closely):\n${opts.notes}`
+      : ""
+  }
+
+Fill the fields for an ONLINE course:
+- "durationDays": the number of live sessions.
+- "schedule": one entry per live SESSION (at most 7). Set "day" to the session number; the title is the session theme; the activities are what happens in that live session.
+- "landImpact": reframe as the real regenerative practices students will put into action in their own life or local place (not work on a host's land).
+- "materials": tools, software, or resources students use.
+- "whatToBring": what students should have ready (a notebook, a stable connection, a quiet space, any optional kit).
+- "whyThisMatch": why learning this live, in a cohort, with this teacher, beats learning it alone.
+- "hostPitch": instead of a message to a host, write a warm welcome note the teacher would send to students who join the cohort.
+Keep all copy tight and never use em dashes.`;
+}
+
 const FORMAT_LABELS: Record<string, string> = {
   day: "a single immersive day course",
   weekend: "a weekend workshop (2–3 days)",
@@ -160,20 +193,22 @@ export async function POST(request: Request) {
     body.audience?.trim() || "curious adults who want to learn by doing";
   const notes = body.details?.trim() || "";
 
-  const userPrompt = host
-    ? buildUserPrompt({
-        hostName: host.name,
-        location: [host.location.place, host.location.country].join(", "),
-        landType: host.landType,
-        story: host.story,
-        needs: host.needs,
-        skill: body.skill.trim(),
-        format,
-        level,
-        audience,
-        notes,
-      })
-    : buildGenericPrompt({ skill: body.skill.trim(), format, level, audience, notes });
+  const userPrompt = body.online
+    ? buildOnlinePrompt({ skill: body.skill.trim(), format, level, audience, notes })
+    : host
+      ? buildUserPrompt({
+          hostName: host.name,
+          location: [host.location.place, host.location.country].join(", "),
+          landType: host.landType,
+          story: host.story,
+          needs: host.needs,
+          skill: body.skill.trim(),
+          format,
+          level,
+          audience,
+          notes,
+        })
+      : buildGenericPrompt({ skill: body.skill.trim(), format, level, audience, notes });
 
   const encoder = new TextEncoder();
 

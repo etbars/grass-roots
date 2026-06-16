@@ -14,6 +14,7 @@ import {
   CalendarDays,
   Check,
   Compass,
+  Globe,
   Sprout,
   Wallet,
   TrendingUp,
@@ -83,7 +84,7 @@ export function ResidencyDesigner({
 }: {
   defaultHostId?: string;
 }) {
-  const [mode, setMode] = useState<"any" | "match">(
+  const [mode, setMode] = useState<"any" | "match" | "online">(
     defaultHostId ? "match" : "any",
   );
   const [hostId, setHostId] = useState(defaultHostId ?? "");
@@ -111,13 +112,20 @@ export function ResidencyDesigner({
   const [refining, setRefining] = useState(false);
 
   // No specific host ("any landscape") designs a portable residency.
+  // "online" designs a live online cohort with no physical site at all.
+  const online = mode === "online";
   const selectedHost = hosts.find((h) => h.id === hostId);
   const generic = !selectedHost;
-  const hostLabel = selectedHost?.name ?? "any landscape";
+  const placementLabel = online ? "Live online" : (selectedHost?.name ?? "any landscape");
   const needsSite = mode === "match" && !selectedHost;
 
   function chooseAny() {
     setMode("any");
+    setHostId("");
+  }
+
+  function chooseOnline() {
+    setMode("online");
     setHostId("");
   }
 
@@ -143,7 +151,7 @@ export function ResidencyDesigner({
       const res = await fetch("/api/design-residency", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hostId, skill, format, level, audience, details }),
+        body: JSON.stringify({ hostId, skill, format, level, audience, details, online }),
       });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
@@ -224,7 +232,9 @@ export function ResidencyDesigner({
         body: JSON.stringify({
           residency: current,
           instruction,
-          hostName: selectedHost?.name ?? "any willing host",
+          hostName: online
+            ? "your live online cohort"
+            : (selectedHost?.name ?? "any willing host"),
         }),
       });
       if (!res.ok || !res.body) return null;
@@ -325,6 +335,13 @@ export function ResidencyDesigner({
                 icon={<Compass className="h-4 w-4" />}
                 title="Assistance wanted in matching"
                 desc="We'll suggest host sites whose land fits your craft."
+              />
+              <ModeCard
+                active={mode === "online"}
+                onClick={chooseOnline}
+                icon={<Globe className="h-4 w-4" />}
+                title="Online, live cohort"
+                desc="Teach live online, no host site. We'll design a live-session course."
               />
             </div>
 
@@ -580,7 +597,8 @@ export function ResidencyDesigner({
 
         {livePreview && (
           <DesignerLiveState
-            hostName={selectedHost?.name ?? null}
+            hostName={online ? null : (selectedHost?.name ?? null)}
+            online={online}
             title={titlePreview}
             hook={hookPreview}
             daysPlanned={daysPlanned}
@@ -591,8 +609,9 @@ export function ResidencyDesigner({
           <ResidencyResult
             residency={residency}
             hostId={hostId}
-            hostName={hostLabel}
+            hostName={placementLabel}
             generic={generic}
+            online={online}
             startDate={publishDate}
             onChange={setResidency}
             onRefine={refine}
@@ -670,11 +689,13 @@ function DesignerEmptyState() {
 
 function DesignerLiveState({
   hostName,
+  online,
   title,
   hook,
   daysPlanned,
 }: {
   hostName: string | null;
+  online?: boolean;
   title: string | null;
   hook: string | null;
   daysPlanned: number;
@@ -684,7 +705,11 @@ function DesignerLiveState({
       <div className="flex items-center gap-2 text-fern">
         <Loader2 className="h-4 w-4 animate-spin" />
         <span className="text-sm font-semibold">
-          {hostName ? `Reading the land at ${hostName}…` : "Reading the land…"}
+          {online
+            ? "Designing your live online cohort…"
+            : hostName
+              ? `Reading the land at ${hostName}…`
+              : "Reading the land…"}
         </span>
       </div>
 
@@ -735,6 +760,7 @@ function ResidencyResult({
   hostId,
   hostName,
   generic,
+  online,
   startDate,
   onChange,
   onRefine,
@@ -744,6 +770,7 @@ function ResidencyResult({
   hostId: string;
   hostName: string;
   generic?: boolean;
+  online?: boolean;
   startDate: string | null;
   onChange: (next: DesignedResidency) => void;
   onRefine: (instruction: string) => void;
@@ -773,7 +800,7 @@ function ResidencyResult({
       <div className="flex items-center justify-between gap-3">
         <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-clay">
           <PencilRuler className="h-4 w-4" />
-          Designed residency · {hostName}
+          Designed {online ? "course" : "residency"} · {hostName}
         </span>
         <div className="flex items-center gap-2">
           <SaveResidencyButton
@@ -786,6 +813,7 @@ function ResidencyResult({
             hostId={hostId}
             hostName={hostName}
             generic={generic}
+            online={online}
             startDate={startDate}
             variant="solid"
           />
@@ -813,7 +841,13 @@ function ResidencyResult({
             value={residency.durationDays}
             onCommit={(n) => set({ durationDays: Math.max(1, n) })}
           />
-          {residency.durationDays === 1 ? " day" : " days"}
+          {online
+            ? residency.durationDays === 1
+              ? " session"
+              : " sessions"
+            : residency.durationDays === 1
+              ? " day"
+              : " days"}
         </span>
         <span className="flex items-center gap-1.5">
           <GraduationCap className="h-4 w-4 text-fern" />
@@ -836,7 +870,7 @@ function ResidencyResult({
       {/* why this match */}
       <div className="mt-6 rounded-xl border border-fern/30 bg-fern/10 p-4">
         <div className="flex items-center gap-1.5 text-sm font-semibold text-moss-deep">
-          <MapPin className="h-4 w-4" /> Why this match works
+          <MapPin className="h-4 w-4" /> {online ? "Why this course works" : "Why this match works"}
         </div>
         <EditableText
           as="p"
@@ -847,10 +881,13 @@ function ResidencyResult({
         />
       </div>
 
-      <EarningsPanel residency={residency} set={set} />
+      <EarningsPanel residency={residency} set={set} online={online} />
 
       {/* schedule */}
-      <Section title="Day by day" icon={<CalendarDays className="h-4 w-4" />}>
+      <Section
+        title={online ? "Session by session" : "Day by day"}
+        icon={<CalendarDays className="h-4 w-4" />}
+      >
         <ol className="mt-2 space-y-4">
           {residency.schedule.map((d, di) => (
             <li key={di} className="flex gap-4">
@@ -927,7 +964,7 @@ function ResidencyResult({
           onChange={(n) => setList("studentOutcomes", n)}
         />
         <ListBlock
-          title="What the land gains"
+          title={online ? "What you'll put into practice" : "What the land gains"}
           icon={<Leaf className="h-4 w-4" />}
           items={residency.landImpact}
           tone="clay"
@@ -941,7 +978,7 @@ function ResidencyResult({
           onChange={(n) => setList("materials", n)}
         />
         <ListBlock
-          title="What to bring"
+          title={online ? "What to have ready" : "What to bring"}
           icon={<Backpack className="h-4 w-4" />}
           items={residency.whatToBring}
           tone="moss"
@@ -990,9 +1027,15 @@ function ResidencyResult({
         </div>
       </Section>
 
-      {/* Host pitch */}
+      {/* Host pitch (online: a welcome note to the cohort) */}
       <Section
-        title={generic ? "Message to a prospective host" : `Message to ${hostName}`}
+        title={
+          online
+            ? "Welcome note to your cohort"
+            : generic
+              ? "Message to a prospective host"
+              : `Message to ${hostName}`
+        }
         icon={<Send className="h-4 w-4" />}
       >
         <div className="mt-2 rounded-xl border border-stone-soft bg-cream/40 p-4">
@@ -1016,9 +1059,10 @@ function ResidencyResult({
           hostId={hostId}
           hostName={hostName}
           generic={generic}
+          online={online}
           startDate={startDate}
           variant="solid"
-          publishLabel="Publish this residency"
+          publishLabel={online ? "Publish this cohort" : "Publish this residency"}
           className="flex w-full items-center justify-center gap-2 rounded-full bg-clay px-5 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-clay-deep"
         />
       </div>
@@ -1124,15 +1168,18 @@ const HOST_SHARE = 0.15;
 function EarningsPanel({
   residency,
   set,
+  online,
 }: {
   residency: DesignedResidency;
   set: (patch: Partial<DesignedResidency>) => void;
+  online?: boolean;
 }) {
   const [students, setStudents] = useState(residency.groupSize);
   const enrolled = Math.min(students, residency.groupSize);
   const gross = enrolled * residency.suggestedPrice;
   const platform = gross * PLATFORM_FEE;
-  const hostShare = gross * HOST_SHARE;
+  // Online cohorts have no host site, so no host share.
+  const hostShare = online ? 0 : gross * HOST_SHARE;
   const materials = enrolled * residency.materialsCostPerStudent;
   const takeHome = Math.max(0, gross - platform - hostShare - materials);
 
@@ -1211,7 +1258,9 @@ function EarningsPanel({
       <dl className="mt-4 space-y-1.5 text-sm">
         <EarningsRow label="Gross fees" value={formatPrice(gross)} />
         <EarningsRow label="Grass Roots (10%)" value={`- ${formatPrice(platform)}`} muted />
-        <EarningsRow label="Host site (15%)" value={`- ${formatPrice(hostShare)}`} muted />
+        {!online && (
+          <EarningsRow label="Host site (15%)" value={`- ${formatPrice(hostShare)}`} muted />
+        )}
         {materials > 0 && (
           <EarningsRow label="Materials" value={`- ${formatPrice(materials)}`} muted />
         )}

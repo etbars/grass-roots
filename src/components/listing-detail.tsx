@@ -71,6 +71,7 @@ export function ListingDetail({ id }: { id: string }) {
     listing.categoryId;
   const paragraphs = listing.listingDescription.split("\n\n").filter(Boolean);
   const demo = listing.demo === true;
+  const isOnline = listing.mode === "online";
   const forming = !demo && !listing.startDate;
 
   return (
@@ -110,6 +111,10 @@ export function ListingDetail({ id }: { id: string }) {
             <div className="rounded-full bg-bark/85 px-3 py-1.5 text-xs font-semibold text-paper backdrop-blur">
               Demonstration
             </div>
+          ) : isOnline ? (
+            <div className="flex items-center gap-1.5 rounded-full bg-moss/95 px-3 py-1.5 text-xs font-semibold text-paper">
+              <Globe className="h-3.5 w-3.5" /> Live online
+            </div>
           ) : (
             <div className="flex items-center gap-1.5 rounded-full bg-clay/95 px-3 py-1.5 text-xs font-semibold text-paper">
               <Globe className="h-3.5 w-3.5" /> Teacher published
@@ -129,7 +134,11 @@ export function ListingDetail({ id }: { id: string }) {
             {listing.title}
           </h1>
           <p className="mt-2 flex items-center gap-1.5 text-bark-soft">
-            <MapPin className="h-4 w-4 text-fern" />
+            {isOnline ? (
+              <Globe className="h-4 w-4 text-fern" />
+            ) : (
+              <MapPin className="h-4 w-4 text-fern" />
+            )}
             {listing.hostName}
             {listing.hostPlace ? ` · ${listing.hostPlace}` : ""}
             {listing.hostCountry ? `, ${listing.hostCountry}` : ""}
@@ -160,7 +169,7 @@ export function ListingDetail({ id }: { id: string }) {
                     className="rounded-2xl border border-stone-soft bg-paper p-5"
                   >
                     <p className="font-display text-lg font-semibold text-bark">
-                      Day {day.day}: {day.title}
+                      {isOnline ? "Session" : "Day"} {day.day}: {day.title}
                     </p>
                     <ul className="mt-2 space-y-1.5">
                       {day.activities.map((a, j) => (

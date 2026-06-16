@@ -204,6 +204,8 @@ export interface PublishedListing {
   // Seeded illustrative listings are flagged demo (not bookable). Listings
   // published by real teachers leave this unset and are real/bookable.
   demo?: boolean;
+  // "online" = a live online cohort (no physical host site). Absent = in-person.
+  mode?: "online" | "in-person";
   skillLevel: string;
   groupSize: number;
   price: number;

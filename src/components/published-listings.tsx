@@ -55,6 +55,7 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
     categories.find((c) => c.id === listing.categoryId)?.name ??
     listing.categoryId;
   const demo = listing.demo === true;
+  const isOnline = listing.mode === "online";
   const forming = !demo && !listing.startDate;
 
   return (
@@ -78,12 +79,20 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
           className={
             demo
               ? "absolute right-3 top-3 rounded-full bg-bark/85 px-2.5 py-1 text-xs font-semibold text-paper backdrop-blur"
-              : forming
-                ? "absolute right-3 top-3 rounded-full bg-fern/90 px-2.5 py-1 text-xs font-semibold text-paper"
-                : "absolute right-3 top-3 rounded-full bg-clay/95 px-2.5 py-1 text-xs font-semibold text-paper"
+              : isOnline
+                ? "absolute right-3 top-3 rounded-full bg-moss/95 px-2.5 py-1 text-xs font-semibold text-paper"
+                : forming
+                  ? "absolute right-3 top-3 rounded-full bg-fern/90 px-2.5 py-1 text-xs font-semibold text-paper"
+                  : "absolute right-3 top-3 rounded-full bg-clay/95 px-2.5 py-1 text-xs font-semibold text-paper"
           }
         >
-          {demo ? "Demo" : forming ? "Gathering interest" : "Just published"}
+          {demo
+            ? "Demo"
+            : isOnline
+              ? "Online"
+              : forming
+                ? "Gathering interest"
+                : "Just published"}
         </div>
       </div>
 
@@ -92,7 +101,11 @@ function ListingCard({ listing }: { listing: PublishedListing }) {
           {listing.title}
         </h3>
         <p className="mt-1.5 flex items-center gap-1 text-sm text-bark-soft">
-          <MapPin className="h-3.5 w-3.5 text-fern" />
+          {isOnline ? (
+            <Globe className="h-3.5 w-3.5 text-fern" />
+          ) : (
+            <MapPin className="h-3.5 w-3.5 text-fern" />
+          )}
           {listing.hostPlace || listing.hostName}
           {listing.hostCountry ? `, ${listing.hostCountry}` : ""}
         </p>

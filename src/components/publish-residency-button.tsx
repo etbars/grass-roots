@@ -14,6 +14,7 @@ export function PublishResidencyButton({
   hostId,
   hostName,
   generic = false,
+  online = false,
   startDate = null,
   variant = "outline",
   className,
@@ -23,6 +24,7 @@ export function PublishResidencyButton({
   hostId: string;
   hostName: string;
   generic?: boolean;
+  online?: boolean;
   startDate?: string | null;
   variant?: "outline" | "solid";
   /** Override the trigger button styling (e.g. a full-width CTA). */
@@ -67,12 +69,17 @@ export function PublishResidencyButton({
         hostName,
         hostPlace: host?.location.place ?? "",
         hostCountry: host?.location.country ?? "",
-        image: host?.image ?? "/images/farm-work.jpg",
+        image: online
+          ? "/images/community-table.jpg"
+          : (host?.image ?? "/images/farm-work.jpg"),
+        mode: online ? "online" : "in-person",
         categoryId,
         title: residency.title,
         hook: residency.hook,
         durationDays: n,
-        durationLabel: `${n} ${n === 1 ? "day" : "days"}`,
+        durationLabel: online
+          ? `${n} ${n === 1 ? "session" : "sessions"}`
+          : `${n} ${n === 1 ? "day" : "days"}`,
         startDate: startDate ?? null,
         skillLevel: residency.skillLevel,
         groupSize: residency.groupSize,
@@ -152,7 +159,12 @@ export function PublishResidencyButton({
                   </button>
                 </div>
                 <p className="mt-1.5 text-sm leading-relaxed text-bark-soft">
-                  {generic ? (
+                  {online ? (
+                    <>
+                      Publish this as a live online cohort. Students will be able
+                      to find it and join.
+                    </>
+                  ) : generic ? (
                     <>
                       Make this residency a live listing open to any willing
                       host. Students will be able to find and reserve it.
