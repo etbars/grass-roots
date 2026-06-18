@@ -93,6 +93,8 @@ export async function joinWaitlist(data: {
   email: string;
   uid: string | null;
   source: string;
+  /** Which sides they're interested in: "student" | "teacher" | "host". */
+  roles?: string[];
 }) {
   await addDoc(collection(requireDb(), "waitlist"), {
     ...data,

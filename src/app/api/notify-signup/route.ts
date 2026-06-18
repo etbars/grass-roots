@@ -21,6 +21,12 @@ const LABELS: Record<string, string> = {
   interest: "course interest",
 };
 
+const ROLE_LABELS: Record<string, string> = {
+  student: "Learner",
+  teacher: "Teacher",
+  host: "Host",
+};
+
 function escapeHtml(s: string) {
   return s.replace(
     /[&<>"]/g,
@@ -46,6 +52,7 @@ export async function POST(request: Request) {
     detail?: string;
     listingId?: string;
     recipientUid?: string;
+    roles?: string[];
   };
 
   // Not configured yet: accept quietly so the sign-up flow is never affected.
@@ -116,6 +123,13 @@ export async function POST(request: Request) {
 
   const label = LABELS[source] ?? "signup";
   const studentName = name || email;
+  const rolesLabel = Array.isArray(body.roles)
+    ? body.roles
+        .map((r) => ROLE_LABELS[r] ?? r)
+        .filter(Boolean)
+        .join(", ")
+        .slice(0, 120)
+    : "";
 
   const subject = toTeacher
     ? `New interest in your course${detail ? `: ${detail}` : ""}`
@@ -135,6 +149,7 @@ export async function POST(request: Request) {
       <h2 style="margin:0 0 10px; font-size:18px;">New ${escapeHtml(label)} 🌱</h2>
       ${name ? `<p style="margin:0;"><strong>Name:</strong> ${escapeHtml(name)}</p>` : ""}
       <p style="margin:0;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+      ${rolesLabel ? `<p style="margin:0;"><strong>Interested as:</strong> ${escapeHtml(rolesLabel)}</p>` : ""}
       ${detail ? `<p style="margin:0;"><strong>Course:</strong> ${escapeHtml(detail)}</p>` : ""}
       <p style="margin:0;"><strong>Source:</strong> ${escapeHtml(source)}</p>
       <p style="margin:14px 0 0; font-size:13px; color:#6b6457;">Sent automatically by grassroots.earth.</p>
