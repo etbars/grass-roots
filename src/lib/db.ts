@@ -95,6 +95,9 @@ export async function joinWaitlist(data: {
   source: string;
   /** Which sides they're interested in: "student" | "teacher" | "host". */
   roles?: string[];
+  name?: string;
+  /** Free text: what they'd like to offer or learn. */
+  comment?: string;
 }) {
   await addDoc(collection(requireDb(), "waitlist"), {
     ...data,

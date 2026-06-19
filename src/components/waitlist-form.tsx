@@ -15,7 +15,9 @@ const ROLE_OPTIONS = [
 
 export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
   const { user } = useAuth();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [comment, setComment] = useState("");
   const [roles, setRoles] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [joined, setJoined] = useState(false);
@@ -30,15 +32,23 @@ export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
     const mail = (email || user?.email || "").trim();
     if (!mail || busy) return;
     setBusy(true);
+    const payload = {
+      email: mail,
+      uid: user?.uid ?? null,
+      source,
+      roles,
+      name: name.trim(),
+      comment: comment.trim(),
+    };
     try {
       if (firebaseEnabled) {
-        await joinWaitlist({ email: mail, uid: user?.uid ?? null, source, roles });
+        await joinWaitlist(payload);
       }
       // Notify the team inbox (best-effort; never blocks the signup).
       void fetch("/api/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "waitlist", email: mail, source, roles }),
+        body: JSON.stringify({ type: "waitlist", ...payload }),
       }).catch(() => {});
     } catch (err) {
       console.error("Waitlist join failed", err);
@@ -90,19 +100,33 @@ export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
         })}
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="space-y-2">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Your name (optional)"
+          className={inputCls}
+        />
         <input
           type="email"
           required
           value={email || user?.email || ""}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@email.com"
-          className="min-w-0 flex-1 rounded-full border border-stone-soft bg-paper px-4 py-3 text-sm text-bark outline-none transition-colors focus:border-fern"
+          className={inputCls}
+        />
+        <textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          rows={3}
+          placeholder="What would you like to offer or learn? (optional)"
+          className="w-full resize-y rounded-2xl border border-stone-soft bg-paper px-4 py-3 text-sm leading-relaxed text-bark outline-none transition-colors focus:border-fern"
         />
         <button
           type="submit"
           disabled={busy}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep disabled:opacity-60"
         >
           {busy ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -117,3 +141,6 @@ export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
     </form>
   );
 }
+
+const inputCls =
+  "w-full rounded-full border border-stone-soft bg-paper px-4 py-3 text-sm text-bark outline-none transition-colors focus:border-fern";

@@ -53,6 +53,7 @@ export async function POST(request: Request) {
     listingId?: string;
     recipientUid?: string;
     roles?: string[];
+    comment?: string;
   };
 
   // Not configured yet: accept quietly so the sign-up flow is never affected.
@@ -130,6 +131,7 @@ export async function POST(request: Request) {
         .join(", ")
         .slice(0, 120)
     : "";
+  const comment = (body.comment || "").trim().slice(0, 2000);
 
   const subject = toTeacher
     ? `New interest in your course${detail ? `: ${detail}` : ""}`
@@ -151,6 +153,7 @@ export async function POST(request: Request) {
       <p style="margin:0;"><strong>Email:</strong> ${escapeHtml(email)}</p>
       ${rolesLabel ? `<p style="margin:0;"><strong>Interested as:</strong> ${escapeHtml(rolesLabel)}</p>` : ""}
       ${detail ? `<p style="margin:0;"><strong>Course:</strong> ${escapeHtml(detail)}</p>` : ""}
+      ${comment ? `<p style="margin:8px 0 0;"><strong>What they'd like:</strong><br>${escapeHtml(comment)}</p>` : ""}
       <p style="margin:0;"><strong>Source:</strong> ${escapeHtml(source)}</p>
       <p style="margin:14px 0 0; font-size:13px; color:#6b6457;">Sent automatically by grassroots.earth.</p>
     </div>`;
