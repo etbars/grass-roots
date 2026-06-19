@@ -488,3 +488,51 @@ export function isUnread(c: Conversation, uid: string): boolean {
   const read = c.reads?.[uid];
   return !read || (read.toMillis?.() ?? 0) < (c.lastMessageAt.toMillis?.() ?? 0);
 }
+
+// ---- Public profiles (bio + photo): readable by anyone, written by the owner ----
+
+export interface PublicProfile {
+  uid: string;
+  displayName: string;
+  headline?: string;
+  bio?: string;
+  photoURL?: string;
+}
+
+export async function getProfile(uid: string): Promise<PublicProfile | null> {
+  const snap = await getDoc(doc(requireDb(), "profiles", uid));
+  return snap.exists()
+    ? { uid, ...(snap.data() as Omit<PublicProfile, "uid">) }
+    : null;
+}
+
+export async function saveProfile(
+  uid: string,
+  data: { displayName: string; headline: string; bio: string; photoURL?: string },
+) {
+  await setDoc(
+    doc(requireDb(), "profiles", uid),
+    { ...data, updatedAt: serverTimestamp() },
+    { merge: true },
+  );
+  // Mirror the name (and photo) to the private user doc so the rest of the app
+  // shows a consistent identity.
+  await setDoc(
+    doc(requireDb(), "users", uid),
+    {
+      displayName: data.displayName,
+      ...(data.photoURL ? { photoURL: data.photoURL } : {}),
+    },
+    { merge: true },
+  );
+}
+
+export async function uploadAvatar(uid: string, file: File): Promise<string> {
+  if (!storage) throw new Error("Storage is not configured.");
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `avatars/${uid}/${Date.now()}-${safe}`;
+  const snap = await uploadBytes(ref(storage, path), file, {
+    contentType: file.type,
+  });
+  return getDownloadURL(snap.ref);
+}

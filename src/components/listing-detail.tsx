@@ -23,11 +23,17 @@ import { CategoryIcon } from "@/components/category-icon";
 import { ApplyButton } from "@/components/apply-button";
 import { MessageTeacherButton } from "@/components/message-teacher-button";
 import { useAuth } from "@/components/auth-provider";
-import { getListing, type PublishedListing } from "@/lib/db";
+import {
+  getListing,
+  getProfile,
+  type PublishedListing,
+  type PublicProfile,
+} from "@/lib/db";
 
 export function ListingDetail({ id }: { id: string }) {
   const { user } = useAuth();
   const [listing, setListing] = useState<PublishedListing | null>(null);
+  const [teacher, setTeacher] = useState<PublicProfile | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "missing">(
     "loading",
   );
@@ -35,6 +41,7 @@ export function ListingDetail({ id }: { id: string }) {
   useEffect(() => {
     void getListing(id).then((l) => {
       setListing(l);
+      if (l?.uid) void getProfile(l.uid).then(setTeacher).catch(() => {});
       setState(l ? "ready" : "missing");
     });
   }, [id]);
@@ -156,6 +163,41 @@ export function ListingDetail({ id }: { id: string }) {
               {p}
             </p>
           ))}
+
+          {teacher && (teacher.bio || teacher.headline || teacher.photoURL) && (
+            <section className="mt-8 rounded-2xl border border-stone-soft bg-cream/30 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-clay">
+                Your teacher
+              </p>
+              <div className="mt-3 flex items-center gap-4">
+                {teacher.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={teacher.photoURL}
+                    alt={teacher.displayName}
+                    className="h-16 w-16 shrink-0 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-fern/15 font-display text-xl font-semibold text-moss">
+                    {(teacher.displayName || "?").slice(0, 1).toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="font-display text-lg font-semibold text-bark">
+                    {teacher.displayName}
+                  </p>
+                  {teacher.headline && (
+                    <p className="text-sm text-bark-soft">{teacher.headline}</p>
+                  )}
+                </div>
+              </div>
+              {teacher.bio && (
+                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-bark-soft">
+                  {teacher.bio}
+                </p>
+              )}
+            </section>
+          )}
 
           {(listing.schedule?.length ?? 0) > 0 && (
             <section className="mt-10">

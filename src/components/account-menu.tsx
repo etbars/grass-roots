@@ -78,6 +78,7 @@ export function AccountMenu({
   );
   const name = profile?.displayName || user.displayName || "Your account";
   const email = profile?.email || user.email || "";
+  const photo = profile?.photoURL || user.photoURL || "";
 
   // ---- Signed in, mobile (inline) ----
   if (variant === "mobile") {
@@ -131,11 +132,16 @@ export function AccountMenu({
         onClick={() => setOpen((v) => !v)}
         aria-label="Account menu"
         className={cn(
-          "flex h-9 w-9 items-center justify-center rounded-full bg-moss text-sm font-semibold text-paper transition-transform hover:scale-105",
+          "flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-moss text-sm font-semibold text-paper transition-transform hover:scale-105",
           open && "ring-2 ring-fern ring-offset-2 ring-offset-cream",
         )}
       >
-        {label}
+        {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={photo} alt="" className="h-full w-full object-cover" />
+        ) : (
+          label
+        )}
       </button>
       {unread && !open && (
         <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-clay ring-2 ring-cream" />

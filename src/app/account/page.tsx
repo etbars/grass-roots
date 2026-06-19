@@ -26,6 +26,7 @@ import {
   type SavedResidency,
 } from "@/lib/db";
 import { PublishResidencyButton } from "@/components/publish-residency-button";
+import { ProfileEditor } from "@/components/profile-editor";
 import { formatPrice } from "@/lib/data";
 import { getFoundingTier } from "@/lib/founding";
 import { cn } from "@/lib/utils";
@@ -33,7 +34,7 @@ import { cn } from "@/lib/utils";
 const ALL_ROLES: UserRole[] = ["student", "teacher", "host"];
 
 export default function AccountPage() {
-  const { enabled, loading, user, profile, signIn, setRoles } = useAuth();
+  const { enabled, loading, user, profile, openAuth, setRoles } = useAuth();
   const [residencies, setResidencies] = useState<SavedResidency[] | null>(null);
   const [enrollments, setEnrollments] = useState<Enrollment[] | null>(null);
   const [listings, setListings] = useState<PublishedListing[] | null>(null);
@@ -75,11 +76,11 @@ export default function AccountPage() {
         </p>
         <button
           type="button"
-          onClick={() => void signIn()}
+          onClick={() => openAuth()}
           className="mt-6 inline-flex items-center gap-2 rounded-full bg-moss px-6 py-3 text-sm font-semibold text-paper shadow-soft transition-colors hover:bg-moss-deep"
         >
           <LogIn className="h-4 w-4" />
-          Sign in with Google
+          Sign in
         </button>
       </Shell>
     );
@@ -99,6 +100,11 @@ export default function AccountPage() {
           {firstName ? `Welcome back, ${firstName}.` : "Welcome back."}
         </h1>
       </header>
+
+      {/* Profile */}
+      <div className="mt-8">
+        <ProfileEditor />
+      </div>
 
       {/* Roles */}
       <section className="mt-8 rounded-2xl border border-stone-soft bg-paper p-6 shadow-soft">
